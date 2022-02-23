@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5abfff63e33bde39c5d40dae2895b0b7",
+    "content-hash": "c648a8977ce96ee42716240d5218c8c5",
     "packages": [
         {
             "name": "components/bootstrap",
@@ -546,6 +546,56 @@
             "time": "2016-08-06T20:24:11+00:00"
         },
         {
+            "name": "psr/log",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/log/tree/1.1.4"
+            },
+            "time": "2021-05-03T11:20:27+00:00"
+        },
+        {
             "name": "psr/simple-cache",
             "version": "1.0.1",
             "source": {
@@ -712,6 +762,94 @@
                 "source": "https://github.com/twbs/bootstrap/tree/v5.1.3"
             },
             "time": "2021-10-09T06:43:19+00:00"
+        },
+        {
+            "name": "ylorant/horaro-php-client",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ylorant/horaro-php-client.git",
+                "reference": "d27742238d4c2988691951f5e1f3b7a3555d3acf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ylorant/horaro-php-client/zipball/d27742238d4c2988691951f5e1f3b7a3555d3acf",
+                "reference": "d27742238d4c2988691951f5e1f3b7a3555d3acf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Horaro\\": "src/",
+                    "Horaro\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yohann Lorant",
+                    "email": "yohann.lorant@gmail.com"
+                }
+            ],
+            "description": "Horaro API PHP client library",
+            "support": {
+                "issues": "https://github.com/ylorant/horaro-php-client/issues",
+                "source": "https://github.com/ylorant/horaro-php-client/tree/1.2"
+            },
+            "time": "2021-05-27T14:03:31+00:00"
+        },
+        {
+            "name": "ylorant/twitch-php-client",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ylorant/twitch-php-client.git",
+                "reference": "ceb11dbc03dc69041554c99cceb6140a4f6726bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ylorant/twitch-php-client/zipball/ceb11dbc03dc69041554c99cceb6140a4f6726bd",
+                "reference": "ceb11dbc03dc69041554c99cceb6140a4f6726bd",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=7.0.0",
+                "psr/log": "^1.0"
+            },
+            "require-dev": {
+                "fzaninotto/faker": "^1.7",
+                "league/climate": "^3.4",
+                "monolog/monolog": "^1.23",
+                "phpunit/php-code-coverage": "^6.0",
+                "phpunit/phpunit": "^7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TwitchClient\\": "src/",
+                    "TwitchClient\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP client for Twitch's multiple APIs, easily extendable and embeddable.",
+            "support": {
+                "issues": "https://github.com/ylorant/twitch-php-client/issues",
+                "source": "https://github.com/ylorant/twitch-php-client/tree/master"
+            },
+            "time": "2020-07-14T22:54:43+00:00"
         }
     ],
     "packages-dev": [
