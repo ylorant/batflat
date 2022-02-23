@@ -15,6 +15,7 @@
         "ext-openssl": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
+        "ext-zlib": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
         "phpfastcache/phpfastcache": "^7.1",
