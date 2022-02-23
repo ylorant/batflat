@@ -12,10 +12,14 @@
 
 namespace Inc\Modules\LangSwitcher;
 
+use Exception;
 use Inc\Core\SiteModule;
 
 class Site extends SiteModule
 {
+    /**
+     * @throws Exception
+     */
     public function init()
     {
         if ($this->settings('settings', 'autodetectlang') == '1' && empty(parseURL(1)) && !isset($_SESSION['langswitcher']['detected'])) {
@@ -73,21 +77,19 @@ class Site extends SiteModule
             $lang = basename($lang);
             $result[] = [
                 'dir'   => $lang,
-                'name'  => mb_strtoupper(preg_replace('/_[a-z]+/', null, $lang)),
-                'symbol' => preg_replace('/_[a-z]+/', null, $lang),
-                'attr'  => (($selected ? $selected : $this->core->lang['name']) == $lang) ? $currentAttr : null
+                'name'  => mb_strtoupper(preg_replace('/_[a-z]+/', '', $lang)),
+                'symbol' => preg_replace('/_[a-z]+/', '', $lang),
+                'attr'  => (($selected ?? $this->core->lang['name']) == $lang) ? $currentAttr : null
             ];
         }
         return $result;
     }
 
-    private function setLanguage($value): bool
+    private function setLanguage($value): void
     {
         if (in_array($value, array_column($this->getLanguages(), 'dir'))) {
             $_SESSION['lang'] = $value;
-            return true;
         }
-        return false;
     }
 
     private function detectBrowserLanguage()

@@ -224,14 +224,14 @@ class Admin extends AdminModule
 
                     // original size
                     $img->save($imgPath);
-                    $src['lg'] = str_replace(BASE_DIR . '/', null, $imgPath);
+                    $src['lg'] = str_replace(BASE_DIR . '/', '', $imgPath);
 
                     // generate thumbs
                     foreach ($this->thumbs as $key => $width) {
                         if ($img->getInfos('width') > $width) {
                             $img->resize($width);
                             $img->save($thumbPath = "{$dir}/{$imgName}-{$key}.{$img->getInfos('type')}");
-                            $src[$key] = str_replace(BASE_DIR . '/', null, $thumbPath);
+                            $src[$key] = str_replace(BASE_DIR . '/', '', $thumbPath);
                         }
                     }
 

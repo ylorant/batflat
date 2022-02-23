@@ -6,9 +6,9 @@ use Inc\Modules\Statistics\DB;
 
 class Chart
 {
-    public function getVisitors($days = 14, $offset = 0, $url = null, $referrer = null)
+    public function getVisitors($days = 14, $offset = 0, $url = null, $referrer = null): array
     {
-        $time = strtotime(date("Ymd000000", strtotime("-".$days + $offset." days")));
+        $time = strtotime(date("Ymd000000", strtotime("-" . ($days + $offset) ." days")));
 
         $query = $this->db('statistics')
             ->select([
@@ -59,32 +59,32 @@ class Chart
         return $return;
     }
 
-    public function getOperatingSystems($url = null, $referrer = null)
+    public function getOperatingSystems($url = null, $referrer = null): array
     {
         return $this->getPopularBy('platform', $url, $referrer);
     }
 
-    public function getBrowsers($url = null, $referrer = null)
+    public function getBrowsers($url = null, $referrer = null): array
     {
         return $this->getPopularBy('browser', $url, $referrer);
     }
 
-    public function getCountries($url = null, $referrer = null)
+    public function getCountries($url = null, $referrer = null): array
     {
         return $this->getPopularBy('country', $url, $referrer);
     }
 
-    public function getPages($url = null, $referrer = null)
+    public function getPages($url = null, $referrer = null): array
     {
         return $this->getPopularBy('url', $url, $referrer, 'desc');
     }
 
-    public function getReferrers($url = null, $referrer = null)
+    public function getReferrers($url = null, $referrer = null): array
     {
         return $this->getPopularBy('referrer', $url, $referrer);
     }
 
-    protected function getPopularBy($group, $url = null, $referrer = null, $order = 'asc')
+    protected function getPopularBy($group, $url = null, $referrer = null, $order = 'asc'): array
     {
         $data = $this->db('statistics')
             ->select([
@@ -121,7 +121,7 @@ class Chart
         ];
     }
 
-    protected function db($table)
+    protected function db($table): DB
     {
         return new DB($table);
     }

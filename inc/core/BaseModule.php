@@ -66,6 +66,11 @@ class BaseModule
     protected array $lang;
 
     /**
+     * @var Router
+     */
+    protected Router $router;
+
+    /**
      * Module constructor
      *
      * @param Main $core
@@ -77,7 +82,7 @@ class BaseModule
         $this->router = $core->router;
         $this->settings = $core->settings;
         $this->lang = $core->lang;
-        $this->name = strtolower(str_replace(['Inc\Modules\\', '\\Admin', '\\Site'], null, static::class));
+        $this->name = strtolower(str_replace(['Inc\Modules\\', '\\Admin', '\\Site'], '', static::class));
     }
 
     /**

@@ -17,7 +17,7 @@
  *
  * @return boolean
  */
-function checkEmptyFields(array $keys, array $array)
+function checkEmptyFields(array $keys, array $array): bool
 {
     foreach ($keys as $field) {
         if (empty($array[$field])) {
@@ -29,13 +29,13 @@ function checkEmptyFields(array $keys, array $array)
 }
 
 /**
- * delte dir with files
+ * delete dir with files
  *
  * @param string $path
  *
  * @return boolean
  */
-function deleteDir($path)
+function deleteDir(string $path): bool
 {
     return !empty($path) && is_file($path)
         ? @unlink($path)
@@ -53,7 +53,7 @@ function deleteDir($path)
  *
  * @return string
  */
-function createSlug($text)
+function createSlug(string $text): string
 {
     $text = str_replace(' ', '-', trim($text));
     $text = str_replace('.', '-', trim($text));
@@ -189,7 +189,7 @@ function parseURL($key = null)
  *
  * @return string
  */
-function addToken($url)
+function addToken(string $url): string
 {
     if (isset($_SESSION['token'])) {
         if (parse_url($url, PHP_URL_QUERY)) {
@@ -209,13 +209,13 @@ function addToken($url)
  *
  * @return string
  */
-function url($data = null)
+function url($data = null): ?string
 {
     if (filter_var($data, FILTER_VALIDATE_URL) !== false) {
         return $data;
     }
 
-    if (!is_array($data) && strpos($data, '#') === 0) {
+    if (!is_array($data) && strpos($data ?? '', '#') === 0) {
         return $data;
     }
 
@@ -274,7 +274,7 @@ function domain($with_protocol = true, $cut_www = false)
  * @return string
  */
 function batflat_dir() {
-    return dirname(str_replace(ADMIN, null, $_SERVER['SCRIPT_NAME']));
+    return dirname(str_replace(ADMIN, '', $_SERVER['SCRIPT_NAME']));
 }
 
 /**

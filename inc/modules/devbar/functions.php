@@ -13,7 +13,7 @@ function dump($variable)
 {
     $backtrace = debug_backtrace()[0];
     Inc\Modules\Devbar\Dump::$data[] = [
-        'trace' => 'file <b>'.str_replace(BASE_DIR, null, $backtrace['file']).'</b> in line <b>'.$backtrace['line'].'</b>',
+        'trace' => 'file <b>'.str_replace(BASE_DIR, '', $backtrace['file']).'</b> in line <b>'.$backtrace['line'].'</b>',
         'value' => print_r($variable, true),
     ];
 }
