@@ -90,10 +90,9 @@ class Site extends Main
             $this->lang['name'] = $_SESSION['lang'];
         }
 
-
         foreach (glob(MODULES . '/*/lang/' . $this->lang['name'] . '.ini') as $file) {
             $base = str_replace($this->lang['name'], 'en_english', $file);
-            $module = str_replace([MODULES . '/', '/lang/' . $this->lang['name'] . '.ini'], null, $file);
+            $module = str_replace([MODULES . '/', '/lang/' . $this->lang['name'] . '.ini'], '', $file);
             $this->lang[$module] = array_merge(parse_ini_file($base), parse_ini_file($file));
         }
         foreach (glob('inc/lang/' . $this->lang['name'] . '/*.ini') as $file) {

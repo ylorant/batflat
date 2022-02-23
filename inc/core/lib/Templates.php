@@ -53,8 +53,8 @@ class Templates
                 '{(\$[a-zA-Z\-\._\[\]\'"0-9]+)\|e}' => '<?php echo htmlspecialchars(%%$1, ENT_QUOTES | ENT_HTML5, "UTF-8"); ?>',
                 '{(\$[a-zA-Z\-\._\[\]\'"0-9]+)\|cut:([0-9]+)}' => '<?php echo str_limit(strip_tags(%%$1), $2); ?>',
                 '{widget: ([\.\-a-zA-Z0-9]+)}' => '<?php echo \Inc\Core\Lib\Widget::call(\'$1\'); ?>',
-                '{include: (.+?\.[a-z]{2,4})}' => '<?php include_once(str_replace(url()."/", null, "$1")); ?>',
-                '{template: (.+?\.[a-z]{2,4})}' => '<?php include_once(str_replace(url()."/", null, $bat["theme"]."/$1")); ?>',
+                '{include: (.+?\.[a-z]{2,4})}' => '<?php include_once(str_replace(url()."/", "", "$1")); ?>',
+                '{template: (.+?\.[a-z]{2,4})}' => '<?php include_once(str_replace(url()."/", "", $bat["theme"]."/$1")); ?>',
                 '{lang: ([a-z]{2}_[a-z]+)}' => '<?php if($bat["lang"] == "$1"): ?>',
                 '{/lang}' => '<?php endif; ?>',
             ];
@@ -123,7 +123,7 @@ class Templates
         if (preg_match_all('/(\$(?:[a-zA-Z0-9_-]+)(?:\.(?:(?:[a-zA-Z0-9_-][^\s]+)))*)/', $content, $matches)) {
             $matches = $this->organize_array($matches);
             usort($matches, function ($a, $b) {
-                return strlen($a[0]) < strlen($b[0]);
+                return strlen($a[0]) < strlen($b[0]) ? 1 : -1;
             });
 
             foreach ($matches as $match) {
@@ -140,7 +140,7 @@ class Templates
         if (preg_match_all('/\%\%(.)([a-zA-Z0-9_-]+)/', $content, $matches)) {
             $matches = $this->organize_array($matches);
             usort($matches, function ($a, $b) {
-                return strlen($a[2]) < strlen($b[2]);
+                return strlen($a[2]) < strlen($b[2]) ? 1 : -1;
             });
 
             foreach ($matches as $match) {

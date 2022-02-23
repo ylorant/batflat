@@ -21,14 +21,14 @@ class Router
      *
      * @var array
      */
-    private $routes = array();
+    private array $routes = array();
 
     /**
      * Route patterns that converts to regexp style
      *
      * @var array
      */
-    private $patterns = array(
+    private array $patterns = array(
         ':any' => '.*',
         ':int' => '[0-9]+',
         ':str' => '[a-zA-Z0-9_-]+',
@@ -41,7 +41,7 @@ class Router
      * @param callable $callback
      * @return void
      */
-    public function set($pattern, $callback)
+    public function set(string $pattern, callable $callback)
     {
         $pattern = str_replace('/', '\/', $pattern);
 
@@ -54,7 +54,7 @@ class Router
      * @param boolean $returnPath
      * @return mixed
      */
-    public function execute($returnPath = false)
+    public function execute(bool $returnPath = false)
     {
         if (empty($path) && empty($_SERVER['PATH_INFO'])) {
             $_SERVER['PATH_INFO'] = explode("?", $_SERVER['REQUEST_URI'])[0];
@@ -78,7 +78,7 @@ class Router
                 $pointsB = preg_match_all($patterns, $b);
             }
 
-            return $pointsA > $pointsB;
+            return $pointsA > $pointsB ? 1 : -1;
         });
 
         foreach ($this->routes as $pattern => $callback) {

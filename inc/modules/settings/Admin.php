@@ -129,7 +129,7 @@ class Admin extends AdminModule
     public function anyLicense()
     {
         if (isset($_POST['license-key'])) {
-            $licenseKey = str_replace('-', null, $_POST['license-key']);
+            $licenseKey = str_replace('-', '', $_POST['license-key']);
 
             if (!($licenseKey = License::getLicenseData($licenseKey))) {
                 $this->notify('failure', $this->lang('license_invalid_key'));
@@ -209,15 +209,15 @@ class Admin extends AdminModule
                 $zip->open($file, ZipArchive::OVERWRITE);
 
                 foreach (glob(BASE_DIR . '/inc/lang/' . $export . '/admin/*.ini') as $f) {
-                    $zip->addFile($f, str_replace(BASE_DIR, null, $f));
+                    $zip->addFile($f, str_replace(BASE_DIR, '', $f));
                 }
 
                 foreach (glob(MODULES . '/*/lang/' . $export . '.ini') as $f) {
-                    $zip->addFile($f, str_replace(BASE_DIR, null, $f));
+                    $zip->addFile($f, str_replace(BASE_DIR, '', $f));
                 }
 
                 foreach (glob(MODULES . '/*/lang/admin/' . $export . '.ini') as $f) {
-                    $zip->addFile($f, str_replace(BASE_DIR, null, $f));
+                    $zip->addFile($f, str_replace(BASE_DIR, '', $f));
                 }
 
                 // Close and send to users
@@ -691,7 +691,7 @@ class Admin extends AdminModule
                 $attr = null;
             }
 
-            $result[md5($file)] = ['name' => basename($file), 'path' => $file, 'short' => str_replace(BASE_DIR, null, $file), 'attr' => $attr];
+            $result[md5($file)] = ['name' => basename($file), 'path' => $file, 'short' => str_replace(BASE_DIR, '', $file), 'attr' => $attr];
         }
 
         return $result;
