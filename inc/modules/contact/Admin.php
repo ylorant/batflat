@@ -15,7 +15,7 @@ use Inc\Core\AdminModule;
 
 class Admin extends AdminModule
 {
-    public function navigation()
+    public function navigation(): array
     {
         return [
             $this->lang('settings', 'general') => 'settings',
@@ -33,7 +33,7 @@ class Admin extends AdminModule
             $assign['users'] = $this->_getUsers();
             $assign['email'] = $value['email'];
         }
-        
+
         $assign['checkbox'] = [
             'switch' => $value['checkbox.switch'],
             'content' => $this->tpl->noParse($value['checkbox.content']),

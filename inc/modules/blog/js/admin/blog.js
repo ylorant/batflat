@@ -147,7 +147,7 @@ function markdown()
             insertEditor('html');
         else
             insertEditor('wysiwyg');
-    } 
+    }
     else
         insertEditor('html');
 }
@@ -158,7 +158,7 @@ $(document).ready(function()
 
     $('form').areYouSure({ 'message': '{$lang.general.unsaved_warning}' });
 
-    var $tags = $('select[name="tags[]"]');
+    const $tags = $('select[name="tags[]"]');
 
     if($tags.hasClass('selectator'))
         $tags.selectator('destroy');
@@ -171,7 +171,7 @@ $(document).ready(function()
         load: function (search, callback) {
             if (search.length < this.minSearchLength) return callback();
             $.ajax({
-                url: '{?= url([ADMIN, "blog", "jsontags", "' + encodeURIComponent(search) + '"]) ?}',
+                url: '{?= url([ADMIN, "blog_sta", "jsontags", "' + encodeURIComponent(search) + '"]) ?}',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -182,7 +182,7 @@ $(document).ready(function()
                 }
             });
         },
-        placeholder: '{$lang.blog.add_a_tag}...',
+        placeholder: '{$lang.blog_sta.add_a_tag}...',
         delay: 200,
         minSearchLength: 2,
         valueField: 'name',

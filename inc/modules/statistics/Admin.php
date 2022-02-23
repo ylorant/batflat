@@ -43,7 +43,7 @@ class Admin extends AdminModule
         $this->core->addJS(url($this->moduleDirectory.'/assets/js/app.js?v={$bat.version}'));
     }
 
-    public function navigation()
+    public function navigation(): array
     {
         return [
             'Main' => 'main',

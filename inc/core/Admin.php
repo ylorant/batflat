@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,6 +12,8 @@
 
 namespace Inc\Core;
 
+use Inc\Modules\Users\Admin as UserAdmin;
+
 /**
  * Core Admin class
  */
@@ -21,21 +24,21 @@ class Admin extends Main
      *
      * @var array
      */
-    private $assign = [];
+    private array $assign = [];
 
     /**
      * Registered module pages
      *
      * @var array
      */
-    private $registerPage = [];
+    private array $registerPage = [];
 
     /**
      * Instance of Modules Collection
      *
      * @var \Inc\Core\Lib\ModulesCollection
      */
-    public $module = null;
+    public ?Lib\ModulesCollection $module = null;
 
     /**
      * Admin constructor
@@ -55,7 +58,7 @@ class Admin extends Main
     * @param string $file
     * @return void
     */
-    public function drawTheme($file)
+    public function drawTheme(string $file)
     {
         $username = $this->getUserInfo('fullname', null, true);
         $access = $this->getUserInfo('access');
@@ -64,32 +67,32 @@ class Admin extends Main
         $this->assign['notify']        = $this->getNotify();
         $this->assign['path']          = url();
         $this->assign['version']       = $this->settings->get('settings.version');
-        $this->assign['has_update']    = $this->module ? $this->module->settings->_checkUpdate() : false;
+        $this->assign['has_update']    = $this->module ? $this->module->settings->checkUpdate() : false;
         $this->assign['update_access'] = ($access == 'all') || in_array('settings', explode(',', $access)) ? true : false;
 
         $this->assign['header'] = isset_or($this->appends['header'], ['']);
         $this->assign['footer'] = isset_or($this->appends['footer'], ['']);
 
         $this->tpl->set('bat', $this->assign);
-        echo $this->tpl->draw(THEMES.'/admin/'.$file, true);
+        echo $this->tpl->draw(THEMES . '/admin/' . $file, true);
     }
 
     /**
     * load language files
-    * @param string $lang
+    * @param string $language
     * @return void
     */
-    private function loadLanguage($language)
+    private function loadLanguage(string $language)
     {
         $this->lang['name'] = $language;
 
-        foreach (glob(MODULES.'/*/lang/admin/'.$language.'.ini') as $file) {
+        foreach (glob(MODULES . '/*/lang/admin/' . $language . '.ini') as $file) {
             $base = str_replace($language, 'en_english', $file);
-            $module = str_replace([MODULES.'/', '/lang/admin/'.$language.'.ini'], null, $file);
+            $module = str_replace([MODULES . '/', '/lang/admin/' . $language . '.ini'], null, $file);
             $this->lang[$module] = array_merge(parse_ini_file($base), parse_ini_file($file));
         }
 
-        foreach (glob('../inc/lang/'.$language.'/admin/*.ini') as $glob) {
+        foreach (glob('../inc/lang/' . $language . '/admin/*.ini') as $glob) {
             $base = str_replace($language, 'en_english', $glob);
             $file = pathinfo($glob);
             $this->lang[$file['filename']] = array_merge(parse_ini_file($base), parse_ini_file($glob));
@@ -100,18 +103,18 @@ class Admin extends Main
     /**
     * load module and set variables
     * @param string $name
-    * @param string $feature
+    * @param string $method
     * @param array $params (optional)
     * @return void
     */
-    public function loadModule($name, $method, $params = [])
+    public function loadModule(string $name, string $method, array $params = [])
     {
         $row = $this->module->{$name};
 
         if ($row && ($details = $this->getModuleInfo($name))) {
             if (($this->getUserInfo('access') == 'all') || in_array($name, explode(',', $this->getUserInfo('access')))) {
-                $anyMethod = 'any'.ucfirst($method);
-                $method = strtolower($_SERVER['REQUEST_METHOD']).ucfirst($method);
+                $anyMethod = 'any' . ucfirst($method);
+                $method = strtolower($_SERVER['REQUEST_METHOD']) . ucfirst($method);
 
                 if (method_exists($this->module->{$name}, $method)) {
                     $details['content'] = call_user_func_array([$this->module->{$name}, $method], array_values($params));
@@ -119,7 +122,7 @@ class Admin extends Main
                     $details['content'] = call_user_func_array([$this->module->{$name}, $anyMethod], array_values($params));
                 } else {
                     http_response_code(404);
-                    $this->setNotify('failure', "[@{$method}] ".$this->lang['general']['unknown_method']);
+                    $this->setNotify('failure', "[@{$method}] " . $this->lang['general']['unknown_method']);
                     $details['content'] = null;
                 }
 
@@ -134,11 +137,11 @@ class Admin extends Main
 
     /**
     * create list of modules
-    * @param string $activeModile
-    * @param string $activeFeature
+    * @param string $activeModule
+    * @param string $activeMethod
     * @return void
     */
-    public function createNav($activeModule, $activeMethod)
+    public function createNav(string $activeModule, string $activeMethod)
     {
         $nav = [];
         $modules = $this->module->getArray();
@@ -189,6 +192,7 @@ class Admin extends Main
                     'dir'       => $dir,
                     'name'      => $details['name'],
                     'icon'      => $details['icon'],
+                    'icon-style' => $details['icon-style'],
                     'url'       => $moduleURL,
                     'active'    => $activeElement,
                     'subnav'    => $subnavURLs,
@@ -201,15 +205,39 @@ class Admin extends Main
     /**
     * get module informations
     * @param string $dir
-    * @return array
+    * @return array|bool
     */
-    public function getModuleInfo($dir)
+    public function getModuleInfo(string $dir)
     {
-        $file = MODULES.'/'.$dir.'/Info.php';
+        $file = MODULES . '/' . $dir . '/Info.php';
         $core = $this;
 
         if (file_exists($file)) {
-            return include($file);
+            $details = include($file);
+
+            // FontAwesome 5.x+ icon styles
+            if (!isset($details['icon-style'])) {
+                $details['icon-style'] = 'solid';
+            }
+            switch ($details['icon-style']) {
+                case 'regular':
+                    $details['icon-style'] = 'far';
+                    break;
+                case 'light':
+                    $details['icon-style'] = 'fal';
+                    break;
+                case 'duotone':
+                    $details['icon-style'] = 'fad';
+                    break;
+                case 'brand':
+                    $details['icon-style'] = 'fab';
+                    break;
+                case 'solid':
+                default:
+                    $details['icon-style'] = 'fas';
+            }
+
+            return $details;
         } else {
             return false;
         }
@@ -218,9 +246,9 @@ class Admin extends Main
     /**
     * get module's methods
     * @param string $dir
-    * @return array
+    * @return array|bool
     */
-    public function getModuleNav($dir)
+    public function getModuleNav(string $dir)
     {
         if ($this->module->has($dir)) {
             return $this->module->{$dir}->navigation();
@@ -231,12 +259,12 @@ class Admin extends Main
 
     /**
     * get module method
-    * @param string $dir
-    * @param string $feature
+    * @param string $name
+    * @param string $method
     * @param array $params (optional)
     * @return array
     */
-    public function getModuleMethod($name, $method, $params = [])
+    public function getModuleMethod(string $name, string $method, array $params = [])
     {
         if (method_exists($this->module->{$name}, $method)) {
             return call_user_func_array([$this->module->{$name}, $method], array_values($params));
@@ -247,12 +275,13 @@ class Admin extends Main
     }
 
     /**
-    * user login
-    * @param string $username
-    * @param string $password
-    * @return bool
-    */
-    public function login($username, $password, $remember_me = false)
+     * user login
+     * @param string $username
+     * @param string $password
+     * @param bool $remember_me
+     * @return bool
+     */
+    public function login(string $username, string $password, bool $remember_me): bool
     {
         // Check attempt
         $attempt = $this->db('login_attempts')->where('ip', $_SERVER['REMOTE_ADDR'])->oneArray();
@@ -268,11 +297,11 @@ class Admin extends Main
 
         // Is IP blocked?
         if ((time() - $attempt['expires']) < 0) {
-            $this->setNotify('failure', sprintf($this->lang['general']['login_attempts'], ceil(($attempt['expires']-time())/60)));
+            $this->setNotify('failure', sprintf($this->lang['general']['login_attempts'], ceil(($attempt['expires'] - time()) / 60)));
             return false;
         }
 
-        $row = $this->db('users')->where('username', $username)->oneArray();
+        $row = $this->db('users')->where('username', $username)->where('status', UserAdmin::STATUS_ACTIVE)->oneArray();
 
         if ($row && count($row) && password_verify(trim($password), $row['password'])) {
             // Reset fail attempts for this IP
@@ -282,18 +311,20 @@ class Admin extends Main
             $_SESSION['token']      = bin2hex(openssl_random_pseudo_bytes(6));
             $_SESSION['userAgent']  = $_SERVER['HTTP_USER_AGENT'];
             $_SESSION['IPaddress']  = $_SERVER['REMOTE_ADDR'];
+            // Locale defined for Javascript usage (Bootbox, etc ...)
+            $_SESSION['locale'] =  substr($this->settings->get('settings.lang_admin'), 0, 2);
 
             if ($remember_me) {
                 $token = str_gen(64, "1234567890qwertyuiop[]asdfghjkl;zxcvbnm,./");
 
-                $this->db('remember_me')->save(['user_id' => $row['id'], 'token' => $token, 'expiry' => time()+60*60*24*30]);
+                $this->db('remember_me')->save(['user_id' => $row['id'], 'token' => $token, 'expiry' => time() + 60 * 60 * 24 * 30]);
 
-                setcookie('batflat_remember', $row['id'].':'.$token, time()+60*60*24*365, '/');
+                setcookie('batflat_remember', $row['id'] . ':' . $token, time() + 60 * 60 * 24 * 365, '/');
             }
             return true;
         } else {
             // Increase attempt
-            $this->db('login_attempts')->where('ip', $_SERVER['REMOTE_ADDR'])->save(['attempts' => $attempt['attempts']+1]);
+            $this->db('login_attempts')->where('ip', $_SERVER['REMOTE_ADDR'])->save(['attempts' => $attempt['attempts'] + 1]);
             $attempt['attempts'] += 1;
 
             // ... and block if reached maximum attempts
@@ -301,7 +332,7 @@ class Admin extends Main
                 $this->db('login_attempts')->where('ip', $_SERVER['REMOTE_ADDR'])->save(['expires' => strtotime("+10 minutes")]);
                 $attempt['expires'] = strtotime("+10 minutes");
 
-                $this->setNotify('failure', sprintf($this->lang['general']['login_attempts'], ceil(($attempt['expires']-time())/60)));
+                $this->setNotify('failure', sprintf($this->lang['general']['login_attempts'], ceil(($attempt['expires'] - time()) / 60)));
             } else {
                 $this->setNotify('failure', $this->lang['general']['login_failure']);
             }
@@ -327,7 +358,7 @@ class Admin extends Main
 
         session_unset();
         session_destroy();
-        redirect(url(ADMIN.'/'));
+        redirect(url(ADMIN . '/'));
     }
 
     /**

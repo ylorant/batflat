@@ -1,0 +1,43 @@
+<div class="event-details">
+    <div class="event-back-button">
+        <a href="{$calendar_url}">
+            <i class="fa fa-chevron-left"></i>
+            Retour au calendrier
+        </a>
+    </div>
+
+    {if: isset($event.picture) && !empty($event.picture)}
+    <img src="{?= url('uploads/events/'.$event.picture) ?}" class="event-picture"/>
+    {/if}
+
+    <div class="event-description-container">
+        {if: $hasMap}
+            <div class="map-container ms-2">
+                <div id="event-{$event.id}-map" class="event-map"></div>
+                <p class="text-center">{$event.building_name}<br/>{$event.building_address}</p>
+            </div>
+        {/if}
+
+        {$event.description}
+        {if: isset($event.ical_url) && !empty($event.ical_url)}
+        <a href="{$event.ical_url}">{$lang.events.ical}</a>
+        {/if}
+    </div>
+</div>
+{if: $hasMap}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let latitude = {$event.latitude};
+        let longitude = {$event.longitude};
+        let map = L.map('event-{$event.id}-map').setView([latitude, longitude], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker([latitude, longitude]).addTo(map)
+            .bindPopup('{$event.database_name}')
+            .openPopup();
+    });
+</script>
+{/if}

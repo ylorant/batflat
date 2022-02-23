@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -15,15 +16,17 @@ use Inc\Core\SiteModule;
 
 class Site extends SiteModule
 {
+    /** @var string */
+    protected string $moduleDirectory = MODULES . '/galleries';
+
     public function init()
     {
-        $this->_importGalleries();
+        $this->importGalleries();
     }
 
-    private function _importGalleries()
+    private function importGalleries()
     {
         $assign = [];
-        $tempAssign = [];
         $galleries = $this->db('galleries')->toArray();
 
         if (count($galleries)) {
@@ -51,10 +54,10 @@ class Site extends SiteModule
                 }
             }
         }
-
         $this->tpl->set('gallery', $assign);
 
-        $this->core->addCSS(url('inc/jscripts/lightbox/lightbox.min.css'));
-        $this->core->addJS(url('inc/jscripts/lightbox/lightbox.min.js'));
+        $this->core->addCSS(url('https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css'));
+        $this->core->addCSS(url($this->moduleDirectory . '/assets/css/galleries.css'));
+        $this->core->addJS(url('https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js'));
     }
 }

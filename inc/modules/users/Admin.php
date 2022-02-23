@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of Batflat ~ the lightweight, fast and easy CMS
  *
@@ -12,12 +13,17 @@
 namespace Inc\Modules\Users;
 
 use Inc\Core\AdminModule;
+use Inc\Core\Lib\Image;
 
 class Admin extends AdminModule
 {
-    private $assign = [];
+    public const STATUS_ACTIVE = 0;
+    public const STATUS_INACTIVE = 1;
+    public const STATUS_BLOCKED = 2;
 
-    public function navigation()
+    private array $assign = [];
+
+    public function navigation(): array
     {
         return [
             $this->lang('manage', 'general') => 'manage',
@@ -28,15 +34,16 @@ class Admin extends AdminModule
     /**
     * users list
     */
-    public function getManage()
+    public function getManage(): string
     {
-        $rows = $this->db('users')->toArray();
+        $rows = $this->db('users')->asc('status')->toArray();
+        $statuses = $this->getStatuses();
 
         foreach ($rows as &$row) {
             if (empty($row['fullname'])) {
                 $row['fullname'] = '----';
             }
-
+            $row['status'] = $statuses[$row['status']]['title'];
             $row['editURL'] = url([ADMIN, 'users', 'edit', $row['id']]);
             $row['delURL']  = url([ADMIN, 'users', 'delete', $row['id']]);
         }
@@ -45,31 +52,30 @@ class Admin extends AdminModule
     }
 
     /**
-    * add new user
-    */
-    public function getAdd()
+     * add new user
+     */
+    public function getAdd(): string
     {
         if (!empty($redirectData = getRedirectData())) {
             $this->assign['form'] = filter_var_array($redirectData, FILTER_SANITIZE_STRING);
         } else {
-            $this->assign['form'] = [
-                'username' => '',
-                'email' => '',
-                'fullname' => '',
-                'description' => ''
-            ];
+            $this->assign['form'] = ['username' => '', 'email' => '', 'fullname' => '', 'description' => ''];
         }
 
+
         $this->assign['title'] = $this->lang('new_user');
-        $this->assign['modules'] = $this->_getModules('all');
-        $this->assign['avatarURL'] = url(MODULES.'/users/img/default.png');
+        $this->assign['modules'] = $this->getModules('all');
+        $this->assign['avatarURL'] = url(MODULES . '/users/img/default.jpg');
 
         return $this->draw('form.html', ['users' => $this->assign]);
     }
 
     /**
-    * edit user
-    */
+     * edit user
+     *
+     * @param $id
+     * @return string|void
+     */
     public function getEdit($id)
     {
         $user = $this->db('users')->oneArray($id);
@@ -77,8 +83,9 @@ class Admin extends AdminModule
         if (!empty($user)) {
             $this->assign['form'] = $user;
             $this->assign['title'] = $this->lang('edit_user');
-            $this->assign['modules'] = $this->_getModules($user['access']);
-            $this->assign['avatarURL'] = url(UPLOADS.'/users/'.$user['avatar']);
+            $this->assign['modules'] = $this->getModules($user['access']);
+            $this->assign['statuses'] = $this->getStatuses();
+            $this->assign['avatarURL'] = url(UPLOADS . '/users/' . $user['avatar']);
 
             return $this->draw('form.html', ['users' => $this->assign]);
         } else {
@@ -92,6 +99,7 @@ class Admin extends AdminModule
     public function postSave($id = null)
     {
         $errors = 0;
+
         $formData = htmlspecialchars_array($_POST);
 
         // location to redirect
@@ -109,26 +117,23 @@ class Admin extends AdminModule
         }
 
         // check if user already exists
-        if ($this->_userAlreadyExists($id)) {
+        if ($this->userAlreadyExists($id)) {
             $errors++;
             $this->notify('failure', $this->lang('user_already_exists'));
         }
-
-        // check if e-mail adress is correct
+        // chech if e-mail adress is correct
         $formData['email'] = filter_var($formData['email'], FILTER_SANITIZE_EMAIL);
         if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
             $errors++;
             $this->notify('failure', $this->lang('wrong_email'));
         }
-
         // check if password is longer than 5 characters
         if (isset($formData['password']) && strlen($formData['password']) < 5) {
             $errors++;
             $this->notify('failure', $this->lang('too_short_pswd'));
         }
-
         // access to modules
-        if ((count($formData['access']) == count($this->_getModules())) || ($id == 1)) {
+        if ((count($formData['access']) == count($this->getModules())) || ($id == 1)) {
             $formData['access'] = 'all';
         } else {
             $formData['access'][] = 'dashboard';
@@ -143,12 +148,11 @@ class Admin extends AdminModule
                 $formData['password'] = password_hash($formData['password'], PASSWORD_BCRYPT);
             }
 
-            // user avatar
             if (($photo = isset_or($_FILES['photo']['tmp_name'], false)) || !$id) {
-                $img = new \Inc\Core\Lib\Image;
+                $img = new Image();
 
                 if (empty($photo) && !$id) {
-                    $photo = MODULES.'/users/img/default.png';
+                    $photo = MODULES . '/users/img/default.jpg';
                 }
                 if ($img->load($photo)) {
                     if ($img->getInfos('width') < $img->getInfos('height')) {
@@ -165,23 +169,23 @@ class Admin extends AdminModule
                         $user = $this->db('users')->oneArray($id);
                     }
 
-                    $formData['avatar'] = uniqid('avatar').".".$img->getInfos('type');
+                    $formData['avatar'] = uniqid('avatar') . "." . $img->getInfos('type');
                 }
             }
 
-            if (!$id) { // new
+            if (!$id) {    // new
                 $query = $this->db('users')->save($formData);
-            } else { // edit
+            } else {        // edit
                 $query = $this->db('users')->where('id', $id)->save($formData);
             }
 
             if ($query) {
                 if (isset($img) && $img->getInfos('width')) {
                     if (isset($user)) {
-                        unlink(UPLOADS."/users/".$user['avatar']);
+                        unlink(UPLOADS . "/users/" . $user['avatar']);
                     }
 
-                    $img->save(UPLOADS."/users/".$formData['avatar']);
+                    $img->save(UPLOADS . "/users/" . $formData['avatar']);
                 }
 
                 $this->notify('success', $this->lang('save_success'));
@@ -203,7 +207,7 @@ class Admin extends AdminModule
         if ($id != 1 && $this->core->getUserInfo('id') != $id && ($user = $this->db('users')->oneArray($id))) {
             if ($this->db('users')->delete($id)) {
                 if (!empty($user['avatar'])) {
-                    unlink(UPLOADS."/users/".$user['avatar']);
+                    unlink(UPLOADS . "/users/" . $user['avatar']);
                 }
 
                 $this->notify('success', $this->lang('delete_success'));
@@ -215,13 +219,15 @@ class Admin extends AdminModule
     }
 
     /**
-    * list of active modules
-    * @return array
-    */
-    private function _getModules($access = null)
+     * list of active modules
+     * @param null $access
+     * @return array
+     */
+    private function getModules($access = null): array
     {
         $result = [];
         $rows = $this->db('modules')->toArray();
+
         $accessArray = $access ? explode(',', $access) : [];
 
         foreach ($rows as $row) {
@@ -237,24 +243,33 @@ class Admin extends AdminModule
                         $attr = '';
                     }
                 }
-                $result[] = ['dir' => $row['dir'], 'name' => $details['name'], 'icon' => $details['icon'], 'attr' => $attr];
+                $result[] = ['dir' => $row['dir'], 'name' => $details['name'], 'icon' => $details['icon'], 'icon-style' => $details['icon-style'], 'attr' => $attr];
             }
         }
         return $result;
     }
 
     /**
-    * check if user already exists
-    * @return array
-    */
-    private function _userAlreadyExists($id = null)
+     * check if user already exists
+     * @param int|null $id
+     * @return bool
+     */
+    private function userAlreadyExists(int $id = null): bool
     {
         if (!$id) {    // new
             $count = $this->db('users')->where('username', $_POST['username'])->count();
         } else {        // edit
             $count = $this->db('users')->where('username', $_POST['username'])->where('id', '<>', $id)->count();
         }
-
         return $count > 0;
+    }
+
+    private function getStatuses(): array
+    {
+        return [
+            ['value' => self::STATUS_ACTIVE, 'title' => $this->lang('active')],
+            ['value' => self::STATUS_INACTIVE, 'title' => $this->lang('inactive')],
+            ['value' => self::STATUS_BLOCKED, 'title' => $this->lang('blocked')]
+        ];
     }
 }

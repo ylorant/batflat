@@ -1,0 +1,116 @@
+<article>
+    <form name="page" class="row" action="{?=url(ADMIN.'/events/save/'.isset_or($event.form.id, null))?}" method="POST" enctype="multipart/form-data">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <label>{$event.title}</label>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>{$lang.general.name}*</label>
+                        <input type="text" name="name" class="form-control" value="{$event.form.name}" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{$lang.events.group}*</label>
+                        <select name="group_id" class="form-control">
+                            {loop: $event.groups}
+                            <option value="{$value.id}" {$value.attr}>{$value.name}</option>
+                            {/loop}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{$lang.events.start_at}*</label>
+                        <input type="datetime-local" class="form-control" name="start_at" value="{$event.form.start_at}" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{$lang.events.end_at}*</label>
+                        <input type="datetime-local" class="form-control" name="end_at" value="{$event.form.end_at}" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{$lang.events.publish_at}</label>
+                        <input type="datetime-local" class="form-control" name="published_at" value="{$event.form.published_at}" />
+                    </div>
+
+                    <div class="form-group no-margin">
+                        <label>{$lang.events.description}*</label>
+                        <div class="progress-wrapper">
+                            <div class="progress no-margin collapse">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar">
+                                </div>
+                            </div>
+                        </div>
+                        <textarea name="description" rows="16" class="editor form-control"
+                                  data-editor="{$event.editor}" required>{$event.form.description}</textarea>
+                    </div>
+
+                    <fieldset class="form-group border p-3">
+                        <legend class="w-auto px-2 border-0 no-bottom-margin">{$lang.events.localization}</legend>
+                        <p><em>{$lang.events.localization_disclaimer}</em></p>
+                        <div class="form-group">
+                            <label>{$lang.events.building_name}</label>
+                            <input type="text" name="building_name" class="form-control" value="{$event.form.building_name}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{$lang.events.building_address}</label>
+                            <input type="text" name="building_address" class="form-control" value="{$event.form.building_address}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{$lang.events.latitude}</label>
+                            <input type="text" name="latitude" class="form-control" value="{$event.form.latitude}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{$lang.events.longitude}</label>
+                            <input type="text" name="longitude" class="form-control" value="{$event.form.longitude}"/>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{$lang.general.settings}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group event-picture">
+                        <label>{$lang.events.picture}</label>
+                        {if: !empty($event.form.picture)}
+                        <div style="position:relative;">
+                            <img src="{?= url('uploads/events/'.$event.form.picture) ?}" class="img-responsive"/>
+                            <input type="file" name="picture" class="form-control"/>
+                            <a href="{$event.pictureDeleteURL}" class="btn btn-danger"
+                               style="position:absolute; right:5px; top:5px;">{$lang.events.delete_picture}</a>
+                        </div>
+                        {else}
+                        <input type="file" name="picture" class="form-control"/>
+                        {/if}
+                    </div>
+
+                    <div class="form-group">
+                        <label>{$lang.general.lang}</label>
+                        <select name="lang" class="form-control">
+                            {loop: $event.langs}
+                            <option {$value.attr}>{$value.name}</option>
+                            {/loop}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><input type="checkbox" name="markdown" value="1" {if: $event.form.markdown== 1}checked{/if} /> {$lang.events.markdown}</label>
+                    </div>
+
+                    <input type="submit" name="save" value="{$lang.general.save}" class="btn btn-primary"/>
+                    <a href="{$event.manageURL}" class="btn btn-default">{$lang.general.cancel}</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</article>

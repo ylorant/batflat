@@ -17,10 +17,10 @@ class Site extends SiteModule
 {
     public function init()
     {
-        $this->tpl->set('carousel', $this->_insertCarousels());
+        $this->tpl->set('carousel', $this->insertCarousels());
     }
 
-    private function _insertCarousels()
+    private function insertCarousels(): array
     {
         $assign = [];
         $tempAssign = [];

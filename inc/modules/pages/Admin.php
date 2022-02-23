@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -15,9 +16,8 @@ use Inc\Core\AdminModule;
 
 class Admin extends AdminModule
 {
-    private $assign = [];
-
-    public function navigation()
+    private array $assign = [];
+    public function navigation(): array
     {
         return [
             $this->lang('manage', 'general')    => 'manage',
@@ -44,25 +44,23 @@ class Admin extends AdminModule
         $totalRecords = $this->db('pages')->where('lang', $lang)->toArray();
         $pagination = new \Inc\Core\Lib\Pagination($page, count($totalRecords), 10, url([ADMIN, 'pages', 'manage', '%d']));
         $this->assign['pagination'] = $pagination->nav();
-        // list
+// list
         $rows = $this->db('pages')->where('lang', $lang)
-                ->limit($pagination->offset().', '.$pagination->getRecordsPerPage())
+                ->limit($pagination->offset() . ', ' . $pagination->getRecordsPerPage())
                 ->toArray();
-
         $this->assign['list'] = [];
         if (count($rows)) {
             foreach ($rows as $row) {
                 $row = htmlspecialchars_array($row);
                 $row['editURL'] = url([ADMIN, 'pages', 'edit', $row['id']]);
                 $row['delURL']  = url([ADMIN, 'pages', 'delete', $row['id']]);
-                $row['viewURL'] = url(explode('_', $lang)[0].'/'.$row['slug']);
+                $row['viewURL'] = url(explode('_', $lang)[0] . '/' . $row['slug']);
                 $row['desc'] = str_limit($row['desc'], 48);
-
                 $this->assign['list'][] = $row;
             }
         }
 
-        $this->assign['langs'] = $this->_getLanguages($lang);
+        $this->assign['langs'] = $this->getLanguages($lang);
         return $this->draw('manage.html', ['pages' => $this->assign]);
     }
 
@@ -72,7 +70,7 @@ class Admin extends AdminModule
     public function getAdd()
     {
         $this->assign['editor'] = $this->settings('settings', 'editor');
-        $this->_addHeaderFiles();
+        $this->addHeaderFiles();
 
         // Unsaved data with failure
         if (!empty($e = getRedirectData())) {
@@ -82,10 +80,9 @@ class Admin extends AdminModule
         }
 
         $this->assign['title'] = $this->lang('new_page');
-        $this->assign['langs'] = $this->_getLanguages($this->settings('settings.lang_site'), 'selected');
-        $this->assign['templates'] = $this->_getTemplates(isset_or($e['template'], 'index.html'));
+        $this->assign['langs'] = $this->getLanguages($this->settings('settings.lang_site'), 'selected');
+        $this->assign['templates'] = $this->getTemplates(isset_or($e['template'], 'index.html'));
         $this->assign['manageURL'] = url([ADMIN, 'pages', 'manage']);
-
         return $this->draw('form.html', ['pages' => $this->assign]);
     }
 
@@ -96,24 +93,20 @@ class Admin extends AdminModule
     public function getEdit($id)
     {
         $this->assign['editor'] = $this->settings('settings', 'editor');
-        $this->_addHeaderFiles();
-
+        $this->addHeaderFiles();
         $page = $this->db('pages')->where('id', $id)->oneArray();
-
         if (!empty($page)) {
-            // Unsaved data with failure
+        // Unsaved data with failure
             if (!empty($e = getRedirectData())) {
                 $page = array_merge($page, ['title' => isset_or($e['title'], ''), 'desc' => isset_or($e['desc'], ''), 'content' => isset_or($e['content'], ''), 'slug' => isset_or($e['slug'], '')]);
             }
 
             $this->assign['form'] = htmlspecialchars_array($page);
             $this->assign['form']['content'] =  $this->tpl->noParse($this->assign['form']['content']);
-
             $this->assign['title'] = $this->lang('edit_page');
-            $this->assign['langs'] = $this->_getLanguages($page['lang'], 'selected');
-            $this->assign['templates'] = $this->_getTemplates($page['template']);
+            $this->assign['langs'] = $this->getLanguages($page['lang'], 'selected');
+            $this->assign['templates'] = $this->getTemplates($page['template']);
             $this->assign['manageURL'] = url([ADMIN, 'pages', 'manage']);
-
             return $this->draw('form.html', ['pages' => $this->assign]);
         } else {
             redirect(url([ADMIN, 'pages', 'manage']));
@@ -126,7 +119,6 @@ class Admin extends AdminModule
     public function postSave($id = null)
     {
         unset($_POST['save'], $_POST['files']);
-
         if (!$id) {
             $location = url([ADMIN, 'pages', 'add']);
         } else {
@@ -195,18 +187,16 @@ class Admin extends AdminModule
     public function postEditorUpload()
     {
         header('Content-type: application/json');
-        $dir    = UPLOADS.'/pages';
+        $dir    = UPLOADS . '/pages';
         $error    = null;
-
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
         }
 
         if (isset($_FILES['file']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image;
-
+            $img = new \Inc\Core\Lib\Image();
             if ($img->load($_FILES['file']['tmp_name'])) {
-                $imgPath = $dir.'/'.time().'.'.$img->getInfos('type');
+                $imgPath = $dir . '/' . time() . '.' . $img->getInfos('type');
                 $img->save($imgPath);
                 echo json_encode(['status' => 'success', 'result' => url($imgPath)]);
             } else {
@@ -226,7 +216,7 @@ class Admin extends AdminModule
     public function getJavascript()
     {
         header('Content-type: text/javascript');
-        echo $this->draw(MODULES.'/pages/js/admin/pages.js');
+        echo $this->draw(MODULES . '/pages/js/admin/pages.js');
         exit();
     }
 
@@ -235,11 +225,10 @@ class Admin extends AdminModule
     * @param string $selected
     * @return array
     */
-    private function _getTemplates($selected = null)
+    private function getTemplates($selected = null)
     {
         $theme = $this->settings('settings', 'theme');
-        $tpls = glob(THEMES.'/'.$theme.'/*.html');
-
+        $tpls = glob(THEMES . '/' . $theme . '/*.html');
         $result = [];
         foreach ($tpls as $tpl) {
             if ($selected == basename($tpl)) {
@@ -252,28 +241,9 @@ class Admin extends AdminModule
         return $result;
     }
 
-    private function _addHeaderFiles()
+    protected function addHeaderFiles()
     {
-        // WYSIWYG
-        $this->core->addCSS(url('inc/jscripts/wysiwyg/summernote.min.css'));
-        $this->core->addJS(url('inc/jscripts/wysiwyg/summernote.min.js'));
-        if ($this->settings('settings', 'lang_admin') != 'en_english') {
-            $this->core->addJS(url('inc/jscripts/wysiwyg/lang/'.$this->settings('settings', 'lang_admin').'.js'));
-        }
-
-        // HTML & MARKDOWN EDITOR
-        $this->core->addCSS(url('/inc/jscripts/editor/markitup.min.css'));
-        $this->core->addCSS(url('/inc/jscripts/editor/markitup.highlight.min.css'));
-        $this->core->addCSS(url('/inc/jscripts/editor/sets/html/set.min.css'));
-        $this->core->addCSS(url('/inc/jscripts/editor/sets/markdown/set.min.css'));
-        $this->core->addJS(url('/inc/jscripts/editor/highlight.min.js'));
-        $this->core->addJS(url('/inc/jscripts/editor/markitup.min.js'));
-        $this->core->addJS(url('/inc/jscripts/editor/markitup.highlight.min.js'));
-        $this->core->addJS(url('/inc/jscripts/editor/sets/html/set.min.js'));
-        $this->core->addJS(url('/inc/jscripts/editor/sets/markdown/set.min.js'));
-
-        // ARE YOU SURE?
-        $this->core->addJS(url('inc/jscripts/are-you-sure.min.js'));
+        parent::addHeaderFiles();
 
         // MODULE SCRIPTS
         $this->core->addJS(url([ADMIN, 'pages', 'javascript']));

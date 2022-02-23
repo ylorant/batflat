@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,6 +12,9 @@
 
 namespace Inc\Core\Lib;
 
+use Inc\Core\BaseModule;
+use Inc\Core\Main;
+
 /**
  * Batflat modules collection
  */
@@ -21,14 +25,14 @@ class ModulesCollection
      *
      * @var array
      */
-    protected $modules = [];
+    protected array $modules = [];
 
     /**
      * ModulesCollection constructor
      *
-     * @param \Inc\Core\Main $core
+     * @param Main $core
      */
-    public function __construct($core)
+    public function __construct(Main $core)
     {
         $modules = array_column($core->db('modules')->asc('sequence')->toArray(), 'dir');
         if ($core instanceof \Inc\Core\Admin) {
@@ -36,11 +40,11 @@ class ModulesCollection
         } else {
             $clsName = 'Site';
         }
-        
+
         foreach ($modules as $dir) {
-            $file = MODULES.'/'.$dir.'/'.$clsName.'.php';
+            $file = MODULES . '/' . $dir . '/' . $clsName . '.php';
             if (file_exists($file)) {
-                $namespace = 'inc\modules\\'.$dir.'\\'.$clsName;
+                $namespace = 'inc\modules\\' . $dir . '\\' . $clsName;
                 $this->modules[$dir] = new $namespace($core);
             }
         }
@@ -95,7 +99,7 @@ class ModulesCollection
      *
      * @return array
      */
-    public function getArray()
+    public function getArray(): array
     {
         return $this->modules;
     }
@@ -106,7 +110,7 @@ class ModulesCollection
      * @param string $name
      * @return bool
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         return array_key_exists($name, $this->modules);
     }
@@ -115,14 +119,10 @@ class ModulesCollection
      * Get specified module by magic method
      *
      * @param string $module
-     * @return \Inc\Core\BaseModule
+     * @return BaseModule
      */
-    public function __get($module)
+    public function __get(string $module)
     {
-        if (isset($this->modules[$module])) {
-            return $this->modules[$module];
-        } else {
-            return null;
-        }
+        return $this->modules[$module] ?? null;
     }
 }

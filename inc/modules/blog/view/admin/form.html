@@ -1,11 +1,11 @@
-<article class="row">
-	<form name="page" action="{?=url(ADMIN.'/blog/save/'.isset_or($blog.form.id, null))?}" method="POST" enctype="multipart/form-data">
+<article>
+	<form name="page" class="row"  action="{?=url(ADMIN.'/blog/save/'.isset_or($blog.form.id, null))?}" method="POST" enctype="multipart/form-data">
 		<div class="col-md-8">
-		    <div class="panel panel-default">
-                <div class="panel-heading">
-		            <h3 class="panel-title">{$blog.title}</h3>
+		    <div class="card">
+                <div class="card-header">
+		            <h3 class="card-title">{$blog.title}</h3>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <div class="form-group">
                         <label>{$lang.general.title}</label>
                         <input type="text" name="title" class="form-control" value="{$blog.form.title}" required />
@@ -26,8 +26,8 @@
                             </div>
                         </div>
                         <ul class="nav nav-tabs" role="tablist" id="textarea-tabs">
-                            <li class="active"><a href="#full-text" role="tab" data-toggle="tab">{$lang.blog.content}</a></li>
-                            <li><a href="#short-text" role="tab" data-toggle="tab">{$lang.blog.intro}</a></li>
+                            <li><a class="active" href="#full-text" role="tab" data-bs-toggle="tab">{$lang.blog.content}</a></li>
+                            <li><a href="#short-text" role="tab" data-bs-toggle="tab">{$lang.blog.intro}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
 	    </div>
 
 	    <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{$lang.general.settings}</h3>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{$lang.general.settings}</h3>
                 </div>
-                <div class="panel-body">
-        	    	<div class="form-group">
+                <div class="card-body">
+        	    	<div class="form-group post-cover">
                         <label>{$lang.blog.cover}</label>
                         {if: !empty($blog.form.cover_photo)}
                         <div style="position:relative;">
@@ -80,7 +80,7 @@
                         <label>{$lang.blog.tags}</label>
                         <select name="tags[]" class="form-control" multiple>
                         {loop: $blog.form.tags}
-                            <option value="{$value.name}" selected>{$value.name}</option>
+                            <option value="{?= urldecode($value.name) ?}" selected>{?= urldecode($value.name) ?}</option>
                         {/loop}
                         </select>
                     </div>

@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,6 +12,12 @@
 
 namespace Inc\Core;
 
+use Exception;
+use Inc\Core\Lib\QueryBuilder;
+use Inc\Core\Lib\Router;
+use Inc\Core\Lib\Settings;
+use Inc\Core\Lib\Templates;
+
 /**
  * Base class for each module functionality
  */
@@ -19,50 +26,49 @@ class BaseModule
     /**
      * Reference to Core instance
      *
-     * @var \Inc\Core\Main
+     * @var Main
      */
-    protected $core;
+    protected Main $core;
 
     /**
      * Reference to Template instance
      *
-     * @var \Inc\Core\Lib\Templates
+     * @var Templates
      */
-    protected $tpl;
+    protected Templates $tpl;
 
     /**
      * Reference to Router instance
      *
-     * @var \Inc\Core\Lib\Router
+     * @var Router
      */
-    protected $route;
+    protected Router $route;
 
     /**
      * Reference to Settings instance
      *
-     * @var \Inc\Core\Lib\Settings
+     * @var Settings
      */
-    protected $settings;
+    protected Settings $settings;
 
     /**
      * Module dir name
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Reference to language array
      *
      * @var array
      */
-    protected $lang;
+    protected array $lang;
 
     /**
      * Module constructor
      *
-     * @param Inc\Core\Main $core
-     * @return void
+     * @param Main $core
      */
     public function __construct(Main $core)
     {
@@ -93,18 +99,19 @@ class BaseModule
     }
 
     /**
-    * Languages list
-    * @param string $selected
-    * @param string $currentAttr ('active' or 'selected')
-    * @return array
-    */
-    protected function _getLanguages($selected = null, $currentAttr = 'active', $all = false)
+     * Languages list
+     * @param string|null $selected
+     * @param string $currentAttr ('active' or 'selected')
+     * @param bool $all
+     * @return array
+     */
+    protected function getLanguages(string $selected = null, string $currentAttr = 'active', bool $all = false): array
     {
-        $langs = glob(BASE_DIR.'/inc/lang/*', GLOB_ONLYDIR);
-        
+        $langs = glob(BASE_DIR . '/inc/lang/*', GLOB_ONLYDIR);
+
         $result = [];
         foreach ($langs as $lang) {
-            if (file_exists($lang.'/.lock')) {
+            if (file_exists($lang . '/.lock')) {
                 $active = false;
 
                 if (!$all) {
@@ -130,7 +137,7 @@ class BaseModule
      * @param array $variables
      * @return string
      */
-    protected function draw($file, array $variables = [])
+    protected function draw(string $file, array $variables = []): string
     {
         if (!empty($variables)) {
             foreach ($variables as $key => $value) {
@@ -140,9 +147,9 @@ class BaseModule
 
         if (strpos($file, BASE_DIR) !== 0) {
             if ($this instanceof AdminModule) {
-                $file = MODULES.'/'.$this->name.'/view/admin/'.$file;
+                $file = MODULES . '/' . $this->name . '/view/admin/' . $file;
             } else {
-                $file = MODULES.'/'.$this->name.'/view/'.$file;
+                $file = MODULES . '/' . $this->name . '/view/' . $file;
             }
         }
 
@@ -153,10 +160,10 @@ class BaseModule
      * Get current module language value
      *
      * @param string $key
-     * @param string $module
-     * @return string
+     * @param string|null $module
+     * @return mixed
      */
-    protected function lang($key, $module = null)
+    protected function lang(string $key, string $module = null)
     {
         if (empty($module)) {
             $module = $this->name;
@@ -171,9 +178,10 @@ class BaseModule
      * @param string $module Example 'module' or shorter 'module.field'
      * @param mixed $field If module has field it contains value
      * @param mixed $value OPTIONAL
-     * @return mixed
+     * @return bool|string
+     * @throws Exception
      */
-    protected function settings($module, $field = false, $value = false)
+    protected function settings(string $module, $field = false, $value = false)
     {
         if (substr_count($module, '.') == 1) {
             $value = $field;
@@ -190,21 +198,18 @@ class BaseModule
     /**
      * Database QueryBuilder
      *
-     * @param string $table
-     * @return \Inc\Core\Lib\QueryBuilder
+     * @param string|null $table
+     * @return QueryBuilder
      */
-    protected function db($table = null)
+    protected function db(string $table = null): QueryBuilder
     {
         return $this->core->db($table);
     }
 
     /**
-    * Create notification
-    * @param string $type ('success' or 'failure')
-    * @param string $text
-    * @param mixed $args [, mixed $... ]]
-    * @return void
-    */
+     * Create notification
+     * @return void
+     */
     protected function notify()
     {
         call_user_func_array([$this->core, 'setNotify'], func_get_args());

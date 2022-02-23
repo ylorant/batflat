@@ -1,0 +1,79 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{$lang.general.manage}</h3>
+				<ul class="nav nav-tabs">
+					{loop: $list.langs}
+					<li class="{$value.attr}"><a href="{?=url(ADMIN.'/pagelist/manage?lang='.$value.name)?}">{$value.name}</a></li>
+					{/loop}
+				</ul>
+            </div>
+            <div class="card-body">
+				<h3 style="margin-top:5px;">{$lang.pagelist.list_count} {?=count($list.list)?}</h3>
+					<div class="table-responsive no-margin">
+						<table class="table table-striped no-margin">
+							<thead>
+								<tr>
+									<th>{$lang.general.title}</th>
+									<th>{$lang.pages.slug}</th>
+									<th>{$lang.general.template}</th>
+									<th class="text-end">{$lang.general.actions}</th>
+								</tr>
+							</thead>
+							<tbody>
+        						{if: !empty($list.list)}
+								{loop: $list.list}
+								<tr>
+									<td><a href="{$value.editURL}">{$value.title} <small>{$value.description}</small></a></td>
+									<td><a href="{$value.viewURL}" target="_blank">/{$value.slug}</a></td>
+									<td>{$value.template}</td>
+									<td class="text-end">
+										<a href="{$value.viewURL}" target="_blank" class="btn btn-primary btn-xs">
+											<i class="fas fa-search"></i> <span class="d-none d-sm-block">{$lang.pagelist.view}</span>
+										</a>
+										<a href="{$value.editURL}" class="btn btn-success btn-xs">
+											<i class="fas fa-pen"></i> <span class="d-none d-sm-block">{$lang.general.edit}</span>
+										</a>
+										<a href="{$value.delURL}" class="btn btn-danger btn-xs" data-confirm="{$lang.pagelist.delete_confirm}">
+											<i class="fas fa-trash-alt"></i> <span class="d-none d-sm-block">{$lang.general.delete}</span>
+										</a>
+									</td>
+								</tr>
+
+								{if: !empty($value.links)}
+								{loop: $value.links}
+								<tr>
+                                    <td colspan="3">&#11169;&emsp;<a href="{$value.editURL}">{$value.title}</a></td>
+                                    <td class="text-end">
+										<a href="{$value.viewURL}" target="_blank" class="btn btn-primary btn-xs">
+											<i class="fas fa-search"></i> <span class="d-none d-sm-block">{$lang.pagelist.view}</span>
+										</a>
+										<a href="{$value.upURL}" class="btn btn-primary btn-xs">
+											<i class="fas fa-arrow-up"></i>
+										</a>
+										<a href="{$value.downURL}" class="btn btn-primary btn-xs">
+											<i class="fas fa-arrow-down"></i>
+										</a>
+										<a href="{$value.editURL}" class="btn btn-success btn-xs">
+											<i class="fas fa-pen"></i> <span class="d-none d-sm-block">{$lang.general.edit}</span>
+										</a>
+										<a href="{$value.delURL}" class="btn btn-danger btn-xs" data-confirm="{$lang.pagelist.delete_link_confirm}">
+											<i class="fas fa-trash-alt"></i> <span class="d-none d-sm-block">{$lang.general.delete}</span>
+										</a>
+									</td>
+								</tr>
+								{/loop}
+								{/if}
+
+								{/loop}
+								{else}
+								<tr><td colspan="4" class="text-center">{$lang.general.empty_array}</td></tr>
+								{/if}
+							</tbody>
+						</table>
+					</div>
+            </div>
+        </div>
+    </div>
+</article>

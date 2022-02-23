@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -17,15 +18,15 @@ namespace Inc\Core\Lib;
  */
 class License
 {
-    const FREE = 1;
-    const COMMERCIAL = 2;
-    const ERROR = 3;
-    const INVALID_DOMAIN = 4;
-    const TIME_OUT = 5;
+    public const FREE = 1;
+    public const COMMERCIAL = 2;
+    public const ERROR = 3;
+    public const INVALID_DOMAIN = 4;
+    public const TIME_OUT = 5;
 
-    private static $feedURL = 'http://feed.sruu.pl';
+    private static string $feedURL = 'http://feed.sruu.pl';
 
-    public static function verify($license)
+    public static function verify($license): int
     {
         $license = self::unpack($license);
 
@@ -33,7 +34,7 @@ class License
             return License::FREE;
         }
 
-        if ($license[0] == md5($license[1].$license[2].$license[3].domain(false, true))) {
+        if ($license[0] == md5($license[1] . $license[2] . $license[3] . domain(false, true))) {
             if (time() < $license[4] || strtotime("-48 hours") > $license[4]) {
                 if (self::remoteCheck($license)) {
                     self::update($license);
@@ -53,8 +54,11 @@ class License
 
     public static function getLicenseData($domainCode)
     {
-        $response = json_decode(HttpRequest::post(self::$feedURL.'/batflat/commercial/license/data', ['code' => $domainCode, 'domain' => domain(false)]), true);
-        
+        $response = json_decode(HttpRequest::post(
+            self::$feedURL . '/batflat/commercial/license/data',
+            ['code' => $domainCode, 'domain' => domain(false)]
+        ), true);
+
         if (isset_or($response['status'], false) == 'verified') {
             return $response['data'];
         }
@@ -80,15 +84,15 @@ class License
         $core->db('settings')->where('module', 'settings')->where('field', 'license')->save(['value' => base64_encode(json_encode($license))]);
     }
 
-    private static function remoteCheck($license)
+    private static function remoteCheck($license): bool
     {
-        $output = HttpRequest::post(self::$feedURL.'/batflat/commercial/license/verify', ['pid' => $license[1], 'code' => $license[2], 'domain' => domain(false), 'domainCode' => $license[3]]);
+        $output = HttpRequest::post(self::$feedURL . '/batflat/commercial/license/verify', ['pid' => $license[1], 'code' => $license[2], 'domain' => domain(false), 'domainCode' => $license[3]]);
         $output = json_decode($output, true);
 
         if (isset_or($output['status'], false) == 'verified') {
             return true;
         }
-        
+
         return false;
     }
 }

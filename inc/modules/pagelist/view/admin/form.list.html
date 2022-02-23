@@ -1,0 +1,76 @@
+<article>
+	<form name="page" class="row" action="{?=url(ADMIN.'/pagelist/saveList/'.@$list.form.id)?}" method="POST">
+		<div class="col-md-8">
+		    <div class="card">
+                <div class="card-header">
+		            <h3 class="card-title">{$list.title}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>{$lang.general.title}</label>
+                        <input type="text" name="title" class="form-control" value="{$list.form.title}" required />
+                    </div>
+                    <div class="form-group no-margin">
+                        <label>{$lang.pagelist.content}</label>
+						<div class="progress-wrapper">
+							<div class="progress no-margin collapse">
+								<div class="progress-bar progress-bar-striped active" role="progressbar">
+								</div>
+							</div>
+						</div>
+                        <textarea name="content" rows="16" class="editor form-control" data-editor="{$list.editor}">{$list.form.content}</textarea>
+                    </div>
+                </div>
+            </div>
+	    </div>
+        
+	    <div class="col-md-4">
+		    <div class="card">
+                <div class="card-header">
+		    	    <h3 class="card-title">SEO</h3>
+                </div>
+                <div class="card-body">
+		            <div class="form-group">
+		                <label>{$lang.pagelist.slug}</label>
+		                <input type="text" name="slug" class="form-control" placeholder="{$lang.general.can_be_empty}" value="{$list.form.slug}"/>
+		            </div>
+		            <div class="form-group no-margin">
+		                <label>{$lang.pagelist.description}</label>
+		                <input type="text" name="description" class="form-control" placeholder="{$lang.general.can_be_empty}" value="{$list.form.description}"/>
+		            </div>
+                </div>
+		    </div>
+
+			<div class="card">
+                <div class="card-header">
+		    	    <h3 class="card-title">{$lang.general.settings}</h3>
+                </div>
+                <div class="card-body">
+		            <div class="form-group">
+		                <label>{$lang.general.lang}</label>
+		                <select name="lang" class="form-control">
+		                	{loop: $list.langs}
+		                    <option {$value.attr}>{$value.name}</option>
+		                    {/loop}
+		                </select>
+		            </div>
+		            <div class="form-group">
+		                <label>{$lang.general.template}</label>
+		                <select name="template" class="form-control">
+		                	{loop: $list.templates}
+		                    <option {$value.attr}>{$value.name}</option>
+		                    {/loop}
+		                </select>
+		            </div>
+
+		            <div class="form-group">
+                        <label><input type="checkbox" name="markdown" value="1" {if: $list.form.markdown == 1}checked{/if} /> {$lang.pages.markdown}</label>
+                    </div>
+		            
+		            <input type="submit" name="save" value="{$lang.general.save}" class="btn btn-primary" />
+					<a href="{$list.manageURL}" class="btn btn-default">{$lang.general.cancel}</a>
+		        </div>
+            </div>
+        </div>
+	</form>
+</article>

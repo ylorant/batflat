@@ -24,7 +24,7 @@ class Admin extends AdminModule
      *
      * @return array
      */
-    public function navigation()
+    public function navigation(): array
     {
         return [
             $this->lang('index') => 'index',
@@ -37,9 +37,18 @@ class Admin extends AdminModule
      *
      * @return string
      */
-    public function getIndex()
+    public function getIndex(): string
     {
         $text = 'Hello World';
         return $this->draw('index.html', ['text' => $text]);
+    }
+
+    /**
+     * Method to get JS and CSS headers
+     * Feel free to add here your own calls but be sure to keep parent call
+     */
+    protected function addHeaderFiles()
+    {
+        parent::addHeaderFiles();
     }
 }

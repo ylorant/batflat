@@ -11,6 +11,8 @@
 
 namespace Inc\Core\Lib;
 
+use Inc\Core\Main;
+
 /**
  * Templates class
  */
@@ -35,7 +37,7 @@ class Templates
      *
      * @var array
      */
-    private $tags = [
+    private array $tags = [
                 '{\*(.*?)\*}' => 'self::comment',
                 '{noparse}(.*?){\/noparse}' => 'self::noParse',
                 '{if: ([^}]*)}' => '<?php if ($1): ?>',
@@ -60,16 +62,16 @@ class Templates
     /**
      * Instance of Batflat core class
      *
-     * @var \Inc\Core\Main
+     * @var Main
      */
-    public $core;
+    public Main $core;
 
     /**
      * Templates constructor
      *
-     * @param Inc\Core\Main $object
+     * @param Main $object
      */
-    public function __construct($object)
+    public function __construct(Main $object)
     {
         $this->core = $object;
         if (!file_exists($this->tmp)) {
@@ -159,16 +161,16 @@ class Templates
      * @param array $input
      * @return array
      */
-    protected function organize_array($input) 
-    { 
+    protected function organize_array($input)
+    {
         for ($z = 0; $z < count($input); $z++) {
-            for ($x = 0; $x < count($input[$z]); $x++) { 
-                $rt[$x][$z] = $input[$z][$x]; 
-            } 
-        }    
-        
-        return $rt; 
-    } 
+            for ($x = 0; $x < count($input[$z]); $x++) {
+                $rt[$x][$z] = $input[$z][$x];
+            }
+        }
+
+        return $rt;
+    }
 
     /**
     * execute PHP code

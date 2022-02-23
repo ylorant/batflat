@@ -75,7 +75,7 @@ class Site extends SiteModule
         //
     }
 
-    protected function db($table = null)
+    protected function db(string $table = null)
     {
         return new DB($table);
     }

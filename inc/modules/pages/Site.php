@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,6 +12,7 @@
 
 namespace Inc\Modules\Pages;
 
+use Inc\Core\Lib\Event;
 use Inc\Core\SiteModule;
 
 class Site extends SiteModule
@@ -18,7 +20,7 @@ class Site extends SiteModule
     public function init()
     {
         $slug = parseURL();
-        $lang = $this->_getLanguageBySlug($slug[0]);
+        $lang = $this->getLanguageBySlug($slug[0]);
         if ($lang !== false) {
             $this->core->loadLanguage($lang);
         }
@@ -26,23 +28,23 @@ class Site extends SiteModule
         if (empty($slug[0]) || ($lang !== false && empty($slug[1]))) {
             $this->core->router->changeRoute($this->settings('settings', 'homepage'));
         }
-        
-        \Inc\Core\Lib\Event::add('router.notfound', function () {
+
+        Event::add('router.notfound', function () {
             $this->get404();
         });
     }
-    
+
     public function routes()
     {
         // Load pages from default language
         $this->route('(:str)', function ($slug) {
-            $this->_importPage($slug);
+            $this->importPage($slug);
         });
 
         // Load pages from specified language prefix
         $this->route('(:str)/(:str)', function ($lang, $slug) {
             // get current language by slug
-            $lang = $this->_getLanguageBySlug($lang);
+            $lang = $this->getLanguageBySlug($lang);
 
             // Set current language to specified or if not exists to default
             if ($lang) {
@@ -51,19 +53,20 @@ class Site extends SiteModule
                 $slug = null;
             }
 
-            $this->_importPage($slug);
+            $this->importPage($slug);
         });
 
-        $this->_importAllPages();
+        $this->importAllPages();
     }
 
     /**
-    * get a specific page
-    */
-    private function _importPage($slug = null)
+     * get a specific page
+     * @param string|null $slug
+     */
+    private function importPage(string $slug = null)
     {
         if (!empty($slug)) {
-            $row = $this->db('pages')->where('slug', $slug)->where('lang', $this->_getCurrentLang())->oneArray();
+            $row = $this->db('pages')->where('slug', $slug)->where('lang', $this->getCurrentLang())->oneArray();
 
             if (empty($row)) {
                 return $this->get404();
@@ -85,7 +88,7 @@ class Site extends SiteModule
     /**
     * get array with all pages
     */
-    private function _importAllPages()
+    private function importAllPages()
     {
         $this->tpl->set('pages', function () {
             $rows = $this->db('pages')->where('lang', $this->_getCurrentLang())->toArray();
@@ -103,7 +106,7 @@ class Site extends SiteModule
     public function get404()
     {
         http_response_code(404);
-        if (!($row = $this->db('pages')->like('slug', '404%')->where('lang', $this->_getCurrentLang())->oneArray())) {
+        if (!($row = $this->db('pages')->like('slug', '404%')->where('lang', $this->getCurrentLang())->oneArray())) {
             echo '<h1>404 Not Found</h1>';
             echo $this->lang('not_found');
             exit;
@@ -112,8 +115,8 @@ class Site extends SiteModule
         $this->setTemplate($row['template']);
         $this->tpl->set('page', $row);
     }
-    
-    private function _getCurrentLang()
+
+    private function getCurrentLang()
     {
         if (!isset($_SESSION['lang'])) {
             return $this->settings('settings', 'lang_site');
@@ -122,9 +125,9 @@ class Site extends SiteModule
         }
     }
 
-    protected function _getLanguageBySlug($slug)
+    protected function getLanguageBySlug($slug)
     {
-        $langs = parent::_getLanguages();
+        $langs = parent::getLanguages();
         foreach ($langs as $lang) {
             preg_match_all('/([a-z]{2})_([a-z]+)/', $lang['name'], $matches);
             if ($slug == $matches[1][0]) {

@@ -1,0 +1,16 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">{$lang.general.settings}</div>
+            <div class="card-body">
+                <form name="user" action="{?=url(ADMIN.'/sitemap/save')?}" method="POST">
+                    <div class="form-group">
+                        <label>{$lang.sitemap.noindex}</label>
+                        <input type="checkbox" name="noindex" value="1" {if: $sitemap.noindex == 1}checked{/if} />
+                    </div>
+                    <input type="submit" name="save" class="btn btn-primary" value="{$lang.general.save}">
+                </form>
+            </div>
+        </div>
+    </div>
+</article>

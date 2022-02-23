@@ -28,7 +28,7 @@ $core = new Inc\Core\Admin;
 
 if ($core->loginCheck()) {
     $core->loadModules();
-    
+
     // Modules routing
     $core->router->set('(:str)/(:str)(:any)', function ($module, $method, $params) use ($core) {
         $core->createNav($module, $method);

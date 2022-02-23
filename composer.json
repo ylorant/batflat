@@ -1,0 +1,29 @@
+{
+    "name": "romainodeval/batflat",
+    "description": "Batflat",
+    "type": "project",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.4",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-intl": "*",
+        "ext-curl": "*",
+        "ext-fileinfo": "*",
+        "ext-pdo": "*",
+        "ext-openssl": "*",
+        "ext-zip": "*",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "phpfastcache/phpfastcache": "^7.1",
+        "eluceo/ical": "^2.3.0",
+        "league/csv": "^9.7",
+        "twbs/bootstrap": "^5.1",
+        "makeusabrew/bootbox": "^5.5",
+        "fortawesome/font-awesome": "^5.15"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*"
+    }
+}

@@ -33,7 +33,7 @@ abstract class SiteModule extends BaseModule
      * @param mixed $callback callable function or name of module method
      * @return void
      */
-    protected function route($pattern, $callback)
+    protected function route(string $pattern, $callback)
     {
         if (is_callable($callback)) {
             $this->core->router->set($pattern, $callback);
@@ -50,7 +50,7 @@ abstract class SiteModule extends BaseModule
      * @param string $file
      * @return void
      */
-    protected function setTemplate($file)
+    protected function setTemplate(string $file)
     {
         $this->core->template = $file;
     }

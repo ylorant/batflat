@@ -1,0 +1,7 @@
+.fc .fc-popover {
+    min-width: fit-content;
+}
+
+.fc-h-event .fc-event-main-frame {
+    display: contents;
+}

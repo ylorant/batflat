@@ -1,0 +1,76 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{$lang.general.manage}</h3>
+                <ul class="nav nav-tabs">
+                    {loop: $events.langs}
+                    <li class="{$value.attr}"><a href="{?=url(ADMIN.'/events/manage?lang='.$value.name)?}">{$value.name}</a></li>
+                    {/loop}
+                </ul>
+            </div>
+
+            <div class="card-body">
+                <form method="post">
+                    <div class="clearfix">
+                        <h3 class="pull-left" style="margin-top:5px;">{$lang.events.event_count} {$events.eventCount}</h3>
+                        <button type="submit" title="{$lang.general.delete}" name="delete" class="btn btn-danger pull-right" data-confirm="{$lang.events.event_del_confirm}" disabled><i class="fas fa-trash"></i> {$lang.general.delete} (<span>0</span>)</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped no-margin">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" class="check-all" /></th>
+                                <th>{$lang.events.manage_title}</th>
+                                <th>{$lang.events.manage_start_at}</th>
+                                <th>{$lang.events.manage_end_at}</th>
+                                <th>{$lang.events.manage_published_at}</th>
+                                <th class="text-end">{$lang.general.actions}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {if: !empty($events.events)}
+                            {loop: $events.events}
+                            <tr>
+                                <td><input type="checkbox" name="event-list[]" class="list-item" value="{$value.id}" /></td>
+                                <td><a href="{$value.editURL}">{$value.name}</a></td>
+                                <td>{$value.start_at}</td>
+                                <td>{$value.end_at}</td>
+                                <td>{$value.published_at}</td>
+                                <td class="text-end">
+                                    <a href="{$value.viewURL}" target="_blank" class="btn btn-primary btn-xs">
+                                        <i class="fas fa-search"></i> <span class="d-none d-sm-block">{$lang.pages.view}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {/loop}
+                            {else}
+                            <tr><td colspan="7" class="text-center">{$lang.general.empty_array}</td></tr>
+                            {/if}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                {$events.pagination}
+            </div>
+        </div>
+    </div>
+</article>
+
+<script>
+    $(".list-item").change(function() {
+        if($('.list-item:checked').length > 0)
+            $('button[name="delete"]').prop("disabled", false)
+        else
+            $('button[name="delete"]').prop("disabled", true)
+        $('button[name="delete"] span').text($(".list-item:checked").length);
+    }).change();
+    $(".check-all").change(function(e) {
+        if($(this).is(":checked"))
+            $('.list-item').prop('checked', true);
+        else
+            $('.list-item').prop('checked', false);
+
+        $('.list-item').change();
+    });
+</script>

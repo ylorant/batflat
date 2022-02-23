@@ -1,34 +1,34 @@
 <section id="devbar">
     <ul class="navbar clearfix">
-        <li class="logo" data-toggle="tooltip" title="Batflat {$devbar.version}">
+        <li class="logo" data-bs-toggle="tooltip" title="Batflat {$devbar.version}">
             <img src="{?= url(THEMES.'/admin/img/logo.svg') ?}" alt="logo">
         </li>
-        <li data-toggle="tooltip" title="Status code">
-            <a href="#info" data-toggle="tab">
-                <i class="fa fa-eye"></i> {?= $_SERVER['REQUEST_METHOD'].' '.http_response_code() ?}
+        <li data-bs-toggle="tooltip" title="Status code">
+            <a href="#info" data-bs-toggle="tab">
+                <i class="fas fa-eye"></i> {?= $_SERVER['REQUEST_METHOD'].' '.http_response_code() ?}
             </a>
         </li>
-        <li data-toggle="tooltip" title="Execution time">
+        <li data-bs-toggle="tooltip" title="Execution time">
             <span>
-                <i class="fa fa-clock-o"></i> {$devbar.timer}ms
+                <i class="far fa-clock"></i> {$devbar.timer}ms
             </span>
         </li>
-        <li data-toggle="tooltip" title="Memory usage">
+        <li data-bs-toggle="tooltip" title="Memory usage">
             <span>
-                <i class="fa fa-server"></i> {$devbar.memory}MB
+                <i class="fas fa-server"></i> {$devbar.memory}MB
             </span>
         </li>
-        <li data-toggle="tooltip" title="Database queries">
-            <a href="#database" data-toggle="tab"><i class="fa fa-database"></i> {?= count($devbar.database) ?}</a>
+        <li data-bs-toggle="tooltip" title="Database queries">
+            <a href="#database" data-bs-toggle="tab"><i class="fas fa-database"></i> {?= count($devbar.database) ?}</a>
         </li>
-        <li data-toggle="tooltip" title="Requests">
-            <a href="#requests" data-toggle="tab"><i class="fa fa-rocket"></i> {?= array_sum(array_column($devbar.requests, 'count')) ?}</a>
+        <li data-bs-toggle="tooltip" title="Requests">
+            <a href="#requests" data-bs-toggle="tab"><i class="fas fa-rocket"></i> {?= array_sum(array_column($devbar.requests, 'count')) ?}</a>
         </li>
-        <li data-toggle="tooltip" title="Dump">
-            <a href="#dump" data-toggle="tab"><i class="fa fa-crosshairs"></i> {?= count($devbar.dump) ?}</a>
+        <li data-bs-toggle="tooltip" title="Dump">
+            <a href="#dump" data-bs-toggle="tab"><i class="fas fa-crosshairs"></i> {?= count($devbar.dump) ?}</a>
         </li>
-        <li class="show-hide" data-toggle="collapse" data-target="#devbar-content">
-            <i class="fa"></i>
+        <li class="show-hide" data-bs-toggle="collapse" data-bs-target="#devbar-content">
+            <i class="fas fa-caret-up"></i>
         </li>
     </ul>
     <div id="devbar-content" class="tab-content collapse">
@@ -75,23 +75,33 @@
     </div>
 </section>
 <script>
-$('#devbar [data-toggle="tooltip"]').tooltip();
-$('#devbar .tab-pane').on('mousewheel DOMMouseScroll', function(e) { 
-    var e0 = e.originalEvent;
-    var delta = e0.wheelDelta || -e0.detail;
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('#devbar [data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    $('#devbar .tab-pane').on('mousewheel DOMMouseScroll', function(e) {
+        var e0 = e.originalEvent;
+        var delta = e0.wheelDelta || -e0.detail;
 
-    this.scrollTop += ( delta < 0 ? 1 : -1 ) * 50;
-    e.preventDefault();  
-});
-$("#devbar a[data-toggle=tab]").click(function() {
-    if(!$('#devbar .show-hide[aria-expanded="true"]').length || $(this).parent().hasClass('active'))
-        $("#devbar .show-hide").click();
-});
-$("#devbar .show-hide").click(function() {
-    var devbar = $(this).parent();
-    $(devbar).addClass('active');
-});
-$("#devbar .truncate").click(function() {
-    $(this).toggleClass('active');
-});
+        this.scrollTop += ( delta < 0 ? 1 : -1 ) * 50;
+        e.preventDefault();
+    });
+    $('#devbar a[data-bs-toggle="tab"]').click(function() {
+        if(!$('#devbar .show-hide[aria-expanded="true"]').length || $(this).parent().hasClass('active'))
+            $("#devbar .show-hide").click();
+    });
+    $("#devbar .show-hide").click(function() {
+        const devbar = $(this).parent();
+        const svg = $(this).children();
+        $(devbar).addClass('active');
+        if (svg.hasClass('fa-caret-up')) {
+            $(svg).addClass('fa-caret-down');
+        }
+        if (svg.hasClass('fa-caret-down')) {
+            $(svg).addClass('fa-caret-up');
+        }
+    });
+    $("#devbar .truncate").click(function() {
+        $(this).toggleClass('active');
+    });
 </script>

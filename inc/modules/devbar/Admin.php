@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,13 +12,15 @@
 
 namespace Inc\Modules\Devbar;
 
+use Exception;
 use Inc\Core\AdminModule;
+use Inc\Core\Main;
 
 class Admin extends AdminModule
 {
     private $timer = 0;
 
-    public function __construct(\Inc\Core\Main $core)
+    public function __construct(Main $core)
     {
         parent::__construct($core);
 
@@ -26,10 +29,13 @@ class Admin extends AdminModule
     public function init()
     {
         if (DEV_MODE && strpos(get_headers_list('Content-Type'), 'text/html') !== false) {
-            $this->core->addCSS(url(MODULES.'/devbar/css/style.css?ver={?= time() ?}'));
+            $this->core->addCSS(url(MODULES . '/devbar/css/style.css?ver={?= time() ?}'));
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function finish()
     {
         if (DEV_MODE && strpos(get_headers_list('Content-Type'), 'text/html') !== false) {
@@ -37,12 +43,12 @@ class Admin extends AdminModule
             foreach (Dump::$data as &$d) {
                 $d['value'] = \htmlspecialchars($this->tpl->noParse($d['value']));
             }
-            
-            echo $this->draw(MODULES.'/devbar/view/bar.html', [
+
+            echo $this->draw(MODULES . '/devbar/view/bar.html', [
                 'devbar' => [
                     'version' => $this->settings('settings', 'version'),
-                    'timer' => round(($this->timer + microtime(true))*1000, 2),
-                    'memory' => round(memory_get_usage()/1024/1024, 2),
+                    'timer' => round(($this->timer + microtime(true)) * 1000, 2),
+                    'memory' => round(memory_get_usage() / 1024 / 1024, 2),
                     'database' => \Inc\Core\Lib\QueryBuilder::lastSqls(),
                     'requests' => [
                         '$_GET' => ['print' => print_r($_GET, true), 'count' => count($_GET)],

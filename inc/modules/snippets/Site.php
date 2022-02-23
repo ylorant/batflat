@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -17,10 +18,10 @@ class Site extends SiteModule
 {
     public function init()
     {
-        $this->_importSnippets();
+        $this->importSnippets();
     }
 
-    private function _importSnippets()
+    private function importSnippets(): void
     {
         $rows = $this->db('snippets')->toArray();
 
@@ -29,6 +30,6 @@ class Site extends SiteModule
             $snippets[$row['slug']] = $row['content'];
         }
 
-        return $this->tpl->set('snippet', $snippets);
+        $this->tpl->set('snippet', $snippets);
     }
 }

@@ -1,0 +1,20 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">{$lang.general.settings}</div>
+            <div class="card-body">
+                <form name="user" action="{?=url(ADMIN.'/events/saveSettings')?}" method="POST">
+                    <div class="form-group">
+                        <label>{$lang.events.slug}</label>
+                        <input type="text" class="form-control" name="slug" value="{$events.slug}">
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.events.event_slug}</label>
+                        <input type="text" class="form-control" name="event_slug" value="{$events.event_slug}">
+                    </div>
+                    <input type="submit" name="save" class="btn btn-primary" value="{$lang.general.save}">
+                </form>
+            </div>
+        </div>
+    </div>
+</article>

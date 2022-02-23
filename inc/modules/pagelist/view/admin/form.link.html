@@ -1,0 +1,97 @@
+<style>
+.btn-file
+{
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file]
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+</style>
+
+<article>
+	<form name="page" class="row" action="{?=url(ADMIN.'/pagelist/saveLink/'.@$list.form.id)?}" method="POST">
+	    <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{$link.title}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>{$lang.pagelist.list}</label>
+                        {if: $link.lockEdit}
+                            <input type="hidden" name="pagelist" value="{$link.link.pagelist}" />
+                            <div class="form-control disabled">
+                            {loop: $link.lists}
+                                {if: $value.id == $link.link.pagelist}
+                                    {$value.title}
+                                {/if}
+                            {/loop}
+                            </div>
+                        {else}
+                        <select name="pagelist" class="form-control {?= $link.lockEdit ? 'disabled' : '' ?}" {?= $link.lockEdit ? 'readonly' : '' ?}>
+                            {loop: $link.lists}
+                            <option value="{$value.id}" {$value.attr}>{$value.title}</option>
+                            {/loop}
+                        </select>
+                        {/if}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>{$lang.pagelist.linked_page}</label>
+                        {if: $link.lockEdit}
+                            <input type="hidden" name="page" value="{$link.link.page}" />
+                            <div class="form-control disabled">
+                            {loop: $link.pages}
+                                {if: $value.id == $link.link.page}
+                                    {$value.title}
+                                {/if}
+                            {/loop}
+                            </div>
+                        {else}
+                        <select name="page" class="form-control {?= $link.lockEdit ? 'disabled' : '' ?}" {?= $link.lockEdit ? 'readonly' : '' ?}>
+                            {loop: $link.pages}
+                            <option value="{$value.id}" {$value.attr}>{$value.title}</option>
+                            {/loop}
+                        </select>
+                        {/if}
+                    </div>
+                    
+                    <div class="form-group clearfix">
+                        <div class="col-md-2">
+                            <img src="{$link.picture}" id="upload-thumbnail" style="max-width: 100%;" />
+                        </div>
+                        <div class="col-md-10">
+                            <label for="fileUpload">
+                                {$lang.pagelist.picture}
+                            </label>
+                            <div>
+                                <input name="picture" type="hidden" id="input-picture" value="{$link.picture}" />
+                                <label class="btn btn-default btn-file">
+								    {$lang.pagelist.browse} <input id="fileUpload" type="file" style="display: none;" data-loader="file-loader" />
+								</label>
+								<i class="fas fa-spin fa-spinner d-none" id="file-loader"></i>
+							</div>
+						</div>
+		            </div>
+		            
+		            <input type="submit" name="save" value="{$lang.general.save}" class="btn btn-primary" />
+					<a href="{$link.manageURL}" class="btn btn-default">{$lang.general.cancel}</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</article>

@@ -31,7 +31,7 @@ function insertEditor(type)
                     editor.parents('form').trigger('checkform.areYouSure');
                 }
             }
-        });        
+        });
     }
     else
     {
@@ -146,7 +146,7 @@ function markdown()
             insertEditor('wysiwyg');
     }
     else
-        insertEditor('html');    
+        insertEditor('html');
 }
 
 $(document).ready(function()

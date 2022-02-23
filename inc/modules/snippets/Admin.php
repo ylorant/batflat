@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,27 +12,28 @@
 
 namespace Inc\Modules\Snippets;
 
+use Exception;
 use Inc\Core\AdminModule;
 
 class Admin extends AdminModule
 {
-    public function navigation()
+    public function navigation(): array
     {
         return [
-            $this->lang('manage', 'general') => 'manage',
-            $this->lang('add') => 'add',
+            $this->lang('manage', 'general')    => 'manage',
+            $this->lang('add')                  => 'add',
         ];
     }
 
     /**
     * list of snippets
     */
-    public function getManage()
+    public function getManage(): string
     {
         $rows = $this->db('snippets')->toArray();
         if (count($rows)) {
             foreach ($rows as &$row) {
-                $row['tag'] = $this->tpl->noParse('{$snippet.'.$row['slug'].'}');
+                $row['tag'] = $this->tpl->noParse('{$snippet.' . $row['slug'] . '}');
                 $row['editURL'] = url([ADMIN, 'snippets', 'edit', $row['id']]);
                 $row['delURL'] = url([ADMIN, 'snippets', 'delete', $row['id']]);
             }
@@ -41,19 +43,21 @@ class Admin extends AdminModule
     }
 
     /**
-    * add new snippet
-    */
-    public function getAdd()
+     * add new snippet
+     * @throws Exception
+     */
+    public function getAdd(): string
     {
         return $this->getEdit();
     }
 
     /**
-    * edit snippet
-    */
-    public function getEdit($id = null)
+     * edit snippet
+     * @throws Exception
+     */
+    public function getEdit($id = null): string
     {
-        $this->_add2header();
+        $this->addHeaderFiles();
 
         if (!empty($redirectData = getRedirectData())) {
             $assign = $redirectData;
@@ -61,6 +65,7 @@ class Admin extends AdminModule
 
         if ($id === null) {
             $row = ['name' => isset_or($assign['name'], null), 'content' => isset_or($assign['content'], null)];
+
             $assign['title'] = $this->lang('add');
         } elseif (!empty($row = $this->db('snippets')->oneArray($id))) {
             $assign['title'] = $this->lang('edit');
@@ -69,11 +74,10 @@ class Admin extends AdminModule
         }
 
         $assign = array_merge($assign, htmlspecialchars_array($row));
-        $assign['languages'] = $this->_getLanguages($this->settings('settings', 'lang_site'));
+        $assign['languages'] = $this->getLanguages($this->settings('settings', 'lang_site'));
 
         $assign['content'] = [];
         preg_match_all("/{lang: ([a-z]{2}_[a-z]+)}(.*?){\/lang}/ms", $row['content'], $matches);
-
         foreach ($matches[1] as $key => $value) {
             $assign['content'][trim($value)] = $this->tpl->noParse(trim($matches[2][$key]));
         }
@@ -120,7 +124,7 @@ class Admin extends AdminModule
 
         $tmp = null;
         foreach ($formData['content'] as $lang => $content) {
-            $tmp .= "{lang: $lang}".$content."{/lang}";
+            $tmp .= "{lang: $lang}" . $content . "{/lang}";
         }
 
         $formData['content'] = $tmp;
@@ -160,30 +164,13 @@ class Admin extends AdminModule
     public function getJavascript()
     {
         header('Content-type: text/javascript');
-        echo $this->draw(MODULES.'/snippets/js/admin/snippets.js');
+        echo $this->draw(MODULES . '/snippets/js/admin/snippets.js');
         exit();
     }
 
-    private function _add2header()
+    protected function addHeaderFiles()
     {
-        // WYSIWYG
-        $this->core->addCSS(url('inc/jscripts/wysiwyg/summernote.min.css'));
-        $this->core->addJS(url('inc/jscripts/wysiwyg/summernote.min.js'));
-        if ($this->settings('settings', 'lang_admin') != 'en_english') {
-            $this->core->addJS(url('inc/jscripts/wysiwyg/lang/'.$this->settings('settings', 'lang_admin').'.js'));
-        }
-
-        // HTML EDITOR
-        $this->core->addCSS(url('/inc/jscripts/editor/markitup.min.css'));
-        $this->core->addCSS(url('/inc/jscripts/editor/markitup.highlight.min.css'));
-        $this->core->addCSS(url('/inc/jscripts/editor/sets/html/set.min.css'));
-        $this->core->addJS(url('/inc/jscripts/editor/highlight.min.js'));
-        $this->core->addJS(url('/inc/jscripts/editor/markitup.min.js'));
-        $this->core->addJS(url('/inc/jscripts/editor/markitup.highlight.min.js'));
-        $this->core->addJS(url('/inc/jscripts/editor/sets/html/set.min.js'));
-
-        // ARE YOU SURE?
-        $this->core->addJS(url('inc/jscripts/are-you-sure.min.js'));
+        parent::addHeaderFiles();
 
         // MODULE SCRIPTS
         $this->core->addJS(url([ADMIN, 'snippets', 'javascript']));

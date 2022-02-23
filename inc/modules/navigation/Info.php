@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -10,13 +11,14 @@
 */
 
 return [
-    'name'          => $core->lang['navigation']['module_name'],
-    'description'   => $core->lang['navigation']['module_desc'],
-    'author'        => 'Sruu.pl',
-    'version'       => '1.3',
-    'compatibility' => '1.3.*',
-    'icon'          => 'list-ul',
-    'install'       => function () use ($core) {
+    'name'          =>  $core->lang['navigation']['module_name'],
+    'description'   =>  $core->lang['navigation']['module_desc'],
+    'author'        =>  'Sruu.pl',
+    'version'       =>  '1.2',
+    'compatibility' =>  '1.3.*',
+    'icon'          =>  'list-ul',
+
+    'install'       =>  function () use ($core) {
         $core->db()->pdo()->exec("CREATE TABLE IF NOT EXISTS `navs` (
             `id` integer NOT NULL PRIMARY KEY AUTOINCREMENT,
             `name` text NOT NULL
@@ -46,7 +48,7 @@ return [
         $core->db()->pdo()->exec("INSERT INTO `navs_items` (`name`, `page`, `lang`, `nav`, `order`)
             VALUES ('Kontakt', 4, 'pl_polski', 1, 3)");
     },
-    'uninstall'     => function () use ($core) {
+    'uninstall'     =>  function () use ($core) {
         $core->db()->pdo()->exec("DROP TABLE `navs`");
         $core->db()->pdo()->exec("DROP TABLE `navs_items`");
     }

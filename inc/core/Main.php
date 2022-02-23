@@ -1,16 +1,19 @@
 <?php
+
 /**
-* This file is part of Batflat ~ the lightweight, fast and easy CMS
-*
-* @author       Paweł Klockiewicz <klockiewicz@sruu.pl>
-* @author       Wojciech Król <krol@sruu.pl>
-* @copyright    2017 Paweł Klockiewicz, Wojciech Król <Sruu.pl>
-* @license      https://batflat.org/license
-* @link         https://batflat.org
-*/
+ * This file is part of Batflat ~ the lightweight, fast and easy CMS
+ *
+ * @author       Paweł Klockiewicz <klockiewicz@sruu.pl>
+ * @author       Wojciech Król <krol@sruu.pl>
+ * @copyright    2017 Paweł Klockiewicz, Wojciech Król <Sruu.pl>
+ * @license      https://batflat.org/license
+ * @link         https://batflat.org
+ */
 
 namespace Inc\Core;
 
+use Exception;
+use Inc\Core\Lib\ModulesCollection;
 use Inc\Core\Lib\QueryBuilder;
 use Inc\Core\Lib\Templates;
 use Inc\Core\Lib\Router;
@@ -27,56 +30,56 @@ abstract class Main
      *
      * @var array
      */
-    public $lang = [];
+    public array $lang = [];
 
     /**
      * Templates instance
      *
      * @var Templates
      */
-    public $tpl;
+    public Templates $tpl;
 
     /**
      * Router instance
      *
      * @var Router
      */
-    public $router;
+    public Router $router;
 
     /**
      * Settings instance
      *
      * @var Settings
      */
-    public $settings;
+    public Settings $settings;
 
     /**
      * List of additional header or footer content
      *
      * @var array
      */
-    public $appends = [];
+    public array $appends = [];
 
     /**
      * Reference to ModulesCollection
      *
-     * @var \Inc\Core\Lib\ModulesCollection|null
+     * @var ModulesCollection|null
      */
-    public $module = null;
+    public ?ModulesCollection $module = null;
 
     /**
      * Settings cache
      *
      * @var array
      */
-    protected static $settingsCache = [];
+    protected static array $settingsCache = [];
 
     /**
      * User cache
      *
      * @var array
      */
-    protected static $userCache = [];
+    protected static array $userCache = [];
 
     /**
      * Main constructor
@@ -85,7 +88,7 @@ abstract class Main
     {
         $this->setSession();
 
-        $dbFile = BASE_DIR.'/inc/data/database.sdb';
+        $dbFile = BASE_DIR . '/inc/data/database.sdb';
 
         if (file_exists($dbFile)) {
             QueryBuilder::connect("sqlite:{$dbFile}");
@@ -97,7 +100,7 @@ abstract class Main
         date_default_timezone_set($this->settings->get('settings.timezone'));
 
         $this->tpl = new Templates($this);
-        $this->router = new Router;
+        $this->router = new Router();
 
         $this->append(base64_decode('PG1ldGEgbmFtZT0iZ2VuZXJhdG9yIiBjb250ZW50PSJCYXRmbGF0IiAvPg=='), 'header');
     }
@@ -105,25 +108,26 @@ abstract class Main
     /**
      * New instance of QueryBuilder
      *
-     * @param string $table
+     * @param string|null $table
      * @return QueryBuilder
      */
-    public function db($table = null)
+    public function db(string $table = null): QueryBuilder
     {
         return new QueryBuilder($table);
     }
 
     /**
-    * get module settings
-    * @param string $module
-    * @param string $field
-    * @param bool $refresh
-    *
-    * @deprecated
-    *
-    * @return string or array
-    */
-    public function getSettings($module = 'settings', $field = null, $refresh = false)
+     * get module settings
+     * @param string $module
+     * @param string|null $field
+     * @param bool $refresh
+     *
+     * @return string or array
+     *
+     * @deprecated
+     *
+     */
+    public function getSettings(string $module = 'settings', string $field = null, bool $refresh = false): string
     {
         if ($refresh) {
             $this->settings->reload();
@@ -139,35 +143,39 @@ abstract class Main
      * @param string $field
      * @param string $value
      *
+     * @return bool
+     * @throws Exception
      * @deprecated
      *
-     * @return bool
      */
-    public function setSettings($module, $field, $value)
+    public function setSettings(string $module, string $field, string $value): bool
     {
         return $this->settings->set($module, $field, $value);
     }
 
     /**
-    * safe session
-    * @return void
-    */
+     * safe session
+     * @return void
+     */
     private function setSession()
     {
         ini_set('session.use_only_cookies', 1);
         session_name('bat');
-        session_set_cookie_params(0, (batflat_dir() === '/' ? '/' : batflat_dir().'/'));
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => (batflat_dir() === '/' ? '/' : batflat_dir() . '/')
+        ]);
         session_start();
     }
 
     /**
-    * create notification
-    * @param string $type ('success' or 'failure')
-    * @param string $text
-    * @param mixed $args [, mixed $... ]]
-    * @return void
-    */
-    public function setNotify($type, $text, $args = null)
+     * create notification
+     * @param string $type ('success' or 'failure')
+     * @param string $text
+     * @param mixed $args [, mixed $... ]]
+     * @return void
+     */
+    public function setNotify(string $type, string $text, $args = null)
     {
         $variables = [];
         $numargs = func_num_args();
@@ -183,9 +191,9 @@ abstract class Main
     }
 
     /**
-    * display notification
-    * @return array or false
-    */
+     * display notification
+     * @return array|false
+     */
     public function getNotify()
     {
         if (isset($_SESSION['failure'])) {
@@ -202,35 +210,35 @@ abstract class Main
     }
 
     /**
-    * adds CSS URL to array
-    * @param string $path
-    * @return void
-    */
-    public function addCSS($path)
+     * adds CSS URL to array
+     * @param string $path
+     * @return void
+     */
+    public function addCSS(string $path)
     {
         $this->appends['header'][] = "<link rel=\"stylesheet\" href=\"$path\">\n";
     }
 
     /**
-    * adds JS URL to array
-    * @param string $path
-    * @param string $location (header / footer)
-    * @return void
-    */
-    public function addJS($path, $location = 'header')
+     * adds JS URL to array
+     * @param string $path
+     * @param string $location (header / footer)
+     * @return void
+     */
+    public function addJS(string $path, string $location = 'header')
     {
         $this->appends[$location][] = "<script src=\"$path\"></script>\n";
     }
 
     /**
-    * adds string to array
-    * @param string $string
-    * @param string $location (header / footer)
-    * @return void
-    */
-    public function append($string, $location)
+     * adds string to array
+     * @param string $string
+     * @param string $location (header / footer)
+     * @return void
+     */
+    public function append(string $string, string $location)
     {
-        $this->appends[$location][] = $string."\n";
+        $this->appends[$location][] = $string . "\n";
     }
 
     /**
@@ -240,7 +248,7 @@ abstract class Main
      * @param string $buffer
      * @return string
      */
-    public static function verifyLicense($buffer)
+    public static function verifyLicense(string $buffer): string
     {
         $core = isset_or($GLOBALS['core'], false);
         if (!$core) {
@@ -248,13 +256,16 @@ abstract class Main
         }
         $checkBuffer = preg_replace('/<!--(.|\s)*?-->/', '', $buffer);
         $isHTML = strpos(get_headers_list('Content-Type'), 'text/html') !== false;
-        $hasBacklink = strpos($checkBuffer, 'Powered by <a href="https://batflat.org/">Batflat</a>') !== false;
+        $hasBacklink = strpos(
+            $checkBuffer,
+            $core->lang['general']['powered_by'] . ' <a href="https://batflat.org/">Batflat</a>'
+        ) !== false;
         $hasHeader = get_headers_list('X-Created-By') === 'Batflat <batflat.org>';
         $license = License::verify($core->settings->get('settings.license'));
         if (($license == License::FREE) && $isHTML && (!$hasBacklink || !$hasHeader)) {
             return '<strong>Batflat license system</strong><br />The return link has been deleted or modified.';
         } elseif ($license == License::TIME_OUT) {
-            return $buffer.'<script>alert("Batflat license system\nCan\'t connect to license server and verify it.");</script>';
+            return $buffer . '<script>alert("Batflat license system\nCan\'t connect to license server and verify it.");</script>';
         } elseif ($license == License::ERROR) {
             return '<strong>Batflat license system</strong><br />The license is not valid. Please correct it or go to free version.';
         }
@@ -263,10 +274,10 @@ abstract class Main
     }
 
     /**
-    * chcec if user is login
-    * @return bool
-    */
-    public function loginCheck()
+     * check if user is login
+     * @return bool
+     */
+    public function loginCheck(): bool
     {
         if (isset($_SESSION['bat_user']) && isset($_SESSION['token']) && isset($_SESSION['userAgent']) && isset($_SESSION['IPaddress'])) {
             if ($_SESSION['IPaddress'] != $_SERVER['REMOTE_ADDR']) {
@@ -297,9 +308,9 @@ abstract class Main
                         $_SESSION['userAgent']  = $_SERVER['HTTP_USER_AGENT'];
                         $_SESSION['IPaddress']  = $_SERVER['REMOTE_ADDR'];
 
-                        $this->db('remember_me')->where('remember_me.user_id', $token[0])->where('remember_me.token', $token[1])->save(['expiry' => time()+60*60*24*30]);
+                        $this->db('remember_me')->where('remember_me.user_id', $token[0])->where('remember_me.token', $token[1])->save(['expiry' => time() + 60 * 60 * 24 * 30]);
 
-                        if (strpos($_SERVER['SCRIPT_NAME'], '/'.ADMIN.'/') !== false) {
+                        if (strpos($_SERVER['SCRIPT_NAME'], '/' . ADMIN . '/') !== false) {
                             redirect(url([ADMIN, 'dashboard', 'main']));
                         }
 
@@ -314,19 +325,25 @@ abstract class Main
     }
 
     /**
-    * get user informations
-    * @param string $filed
-    * @param int $id (optional)
-    * @return string
-    */
-    public function getUserInfo($field, $id = null, $refresh = false)
+     * get user informations
+     * @param string $field
+     * @param int|null $id (optional)
+     * @param bool $refresh (optional)
+     * @return string
+     */
+    public function getUserInfo(string $field, int $id = null, bool $refresh = false): ?string
     {
         if (!$id) {
             $id = isset_or($_SESSION['bat_user'], 0);
         }
 
         if (empty(self::$userCache) || $refresh) {
-            self::$userCache = $this->db('users')->where('id', $id)->oneArray();
+            $request = $this->db('users')->where('id', $id)->oneArray();
+            self::$userCache = is_array($request) ? $request : [];
+        }
+
+        if (empty(self::$userCache) || empty(self::$userCache[$field])) {
+            return null;
         }
 
         return self::$userCache ? self::$userCache[$field] : null;
@@ -345,11 +362,11 @@ abstract class Main
     }
 
     /**
-    * Generating database with Batflat data
-    * @param string $dbFile path to Batflat SQLite database
-    * @return void
-    */
-    private function freshInstall($dbFile)
+     * Generating database with Batflat data
+     * @param string $dbFile path to Batflat SQLite database
+     * @return void
+     */
+    private function freshInstall(string $dbFile)
     {
         QueryBuilder::connect("sqlite:{$dbFile}");
         $pdo = QueryBuilder::pdo();
@@ -358,10 +375,10 @@ abstract class Main
 
         $modules = unserialize(BASIC_MODULES);
         foreach ($modules as $module) {
-            $file = MODULES.'/'.$module.'/Info.php';
+            $file = MODULES . '/' . $module . '/Info.php';
 
             if (file_exists($file)) {
-                $this->lang[$module] = parse_ini_file(MODULES.'/'.$module.'/lang/admin/en_english.ini');
+                $this->lang[$module] = parse_ini_file(MODULES . '/' . $module . '/lang/admin/en_english.ini');
 
                 $info = include($file);
                 if (isset($info['install'])) {

@@ -11,25 +11,29 @@
 
 namespace Inc\Modules\Navigation;
 
+use Exception;
 use Inc\Core\SiteModule;
 
 class Site extends SiteModule
 {
+    /**
+     * @throws Exception
+     */
     public function routes()
     {
-        $this->_insertMenu();
+        $this->insertMenu();
     }
 
     /**
-    * get nav data
-    */
-    private function _insertMenu()
+     * get nav data
+     * @throws Exception
+     */
+    private function insertMenu()
     {
         $assign = [];
         $homepage = $this->settings('settings', 'homepage');
 
         $lang_prefix = $this->core->lang['name'];
-
         if ($lang_prefix != $this->settings('settings', 'lang_site')) {
             $lang_prefix = explode('_', $lang_prefix)[0];
         } else {
@@ -55,14 +59,14 @@ class Site extends SiteModule
                         }
 
                         $url = parseURL();
-                        if ($url[0] == $item['slug'] || (preg_match('/^[a-z]{2}$/', $url[0]) && isset_or($url[1], $homepage) == $item['slug']) || $this->_isChildActive($item['id'], $url[0]) || ($url[0] == null && $homepage == $item['slug'])) {
+                        if ($url[0] == $item['slug'] || (preg_match('/^[a-z]{2}$/', $url[0]) && isset_or($url[1], $homepage) == $item['slug']) || $this->isChildActive($item['id'], $url[0]) || ($url[0] == null && $homepage == $item['slug'])) {
                             $item['active'] = 'active';
                         }
                     } else {
                         $item['url'] = url($item['url']);
                         $page = ['slug' => null];
 
-                        if (url(parseURL(1)) == $item['url'] || $this->_isChildActive($item['id'], parseURL(1)) || (parseURL(1) == null && url($homepage) == $item['url'])) {
+                        if (url(parseURL(1)) == $item['url'] || $this->isChildActive($item['id'], parseURL(1)) || (parseURL(1) == null && url($homepage) == $item['url'])) {
                             $item['active'] = 'active';
                         }
 
@@ -83,9 +87,12 @@ class Site extends SiteModule
     }
 
     /**
-    * check if parent's child is active
-    */
-    private function _isChildActive($itemID, $slug)
+     * Check if parent's child is active
+     * @param $itemID
+     * @param string $slug
+     * @return bool
+     */
+    private function isChildActive($itemID, string $slug): bool
     {
         $rows = $this->db('pages')
                 ->leftJoin('navs_items', 'pages.id = navs_items.page')
@@ -99,7 +106,6 @@ class Site extends SiteModule
                 }
             }
         }
-
         return false;
     }
 }

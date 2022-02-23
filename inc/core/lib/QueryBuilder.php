@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,6 +12,10 @@
 
 namespace Inc\Core\Lib;
 
+use PDO;
+use PDOStatement;
+use stdObject;
+
 /**
  * Batflat QueryBuilder class
  */
@@ -18,40 +23,40 @@ class QueryBuilder
 {
     protected static $db = null;
 
-    protected static $last_sqls = [];
+    protected static array $last_sqls = [];
 
-    protected static $options = [];
+    protected static array $options = [];
 
-    protected $table = null;
+    protected ?string $table = null;
 
-    protected $columns = [];
+    protected array $columns = [];
 
-    protected $joins = [];
+    protected array $joins = [];
 
-    protected $conditions = [];
+    protected array $conditions = [];
 
-    protected $condition_binds = [];
+    protected array $condition_binds = [];
 
-    protected $sets = [];
+    protected array $sets = [];
 
-    protected $set_binds = [];
+    protected array $set_binds = [];
 
-    protected $orders = [];
+    protected array $orders = [];
 
-    protected $group_by = [];
+    protected array $group_by = [];
 
-    protected $having = [];
+    protected array $having = [];
 
-    protected $limit = '';
+    protected string $limit = '';
 
-    protected $offset = '';
+    protected string $offset = '';
 
     /**
     * constructor
     *
-    * @param string $table
+    * @param string|null $table
     */
-    public function __construct($table = null)
+    public function __construct(string $table = null)
     {
         if ($table) {
             $this->table = $table;
@@ -73,7 +78,7 @@ class QueryBuilder
     *
     * @return array SQLs array
     */
-    public static function lastSqls()
+    public static function lastSqls(): array
     {
         return static::$last_sqls;
     }
@@ -132,7 +137,7 @@ class QueryBuilder
     * @param string $name
     * @param mixed $value
     */
-    public static function config($name, $value = null)
+    public static function config(string $name, $value = null)
     {
         if ($value === null) {
             return static::$options[$name];
@@ -150,9 +155,9 @@ class QueryBuilder
     *
     * @param string|array $columns
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function select($columns)
+    public function select($columns): QueryBuilder
     {
         if (!is_array($columns)) {
             $columns = array($columns);
@@ -172,9 +177,9 @@ class QueryBuilder
     * @param string $table
     * @param string $condition
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function join($table, $condition)
+    public function join(string $table, string $condition): QueryBuilder
     {
         array_push($this->joins, "INNER JOIN $table ON $condition");
         return $this;
@@ -186,9 +191,9 @@ class QueryBuilder
     * @param string $table
     * @param string $condition
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function leftJoin($table, $condition)
+    public function leftJoin(string $table, string $condition): QueryBuilder
     {
         array_push($this->joins, "LEFT JOIN $table ON $condition");
         return $this;
@@ -203,7 +208,7 @@ class QueryBuilder
     * @param string $aggregate_function
     * @param mixed $value
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function having($aggregate_function, $operator, $value = null, $ao = 'AND')
     {
@@ -245,22 +250,22 @@ class QueryBuilder
     * where(column, value) // WHERE column = value
     * where(value) // WHERE id = value
     * where(function($st) {
-    *	$st->where()...
+    *   $st->where()...
     * })
     *
     * @param mixed $column
     * @param mixed $value
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function where($column, $operator = null, $value = null, $ao = 'AND')
+    public function where($column, $operator = null, $value = null, $ao = 'AND'): QueryBuilder
     {
         // Where group
         if (!is_string($column) && is_callable($column)) {
             if (empty($this->conditions) || strpos(end($this->conditions), '(') !== false) {
                 array_push($this->conditions, '(');
             } else {
-                array_push($this->conditions, $ao.' (');
+                array_push($this->conditions, $ao . ' (');
             }
 
             call_user_func($column, $this);
@@ -304,13 +309,13 @@ class QueryBuilder
      * orWhere(column, value) // WHERE column = value
      * orWhere(value) // WHERE id = value
      * orWhere(function($st) {
-     *	$st->where()...
+     *  $st->where()...
      * })
      *
      * @param mixed $column
      * @param mixed $value
      *
-     * @return \Inc\Core\Lib\QueryBuilder
+     * @return QueryBuilder
      */
     public function orWhere($column, $operator = null, $value = null)
     {
@@ -322,7 +327,7 @@ class QueryBuilder
      *
      * @param string $column
      * @param string $ao
-     * @return \Inc\Core\Lib\QueryBuilder
+     * @return QueryBuilder
      */
     public function isNull($column, $ao = 'AND')
     {
@@ -330,7 +335,7 @@ class QueryBuilder
             foreach ($column as $c) {
                 $this->isNull($c, $ao);
             }
-            
+
             return $this;
         }
 
@@ -348,7 +353,7 @@ class QueryBuilder
      *
      * @param string $column
      * @param string $ao
-     * @return \Inc\Core\Lib\QueryBuilder
+     * @return QueryBuilder
      */
     public function isNotNull($column, $ao = 'AND')
     {
@@ -356,7 +361,7 @@ class QueryBuilder
             foreach ($column as $c) {
                 $this->isNotNull($c, $ao);
             }
-            
+
             return $this;
         }
 
@@ -365,7 +370,7 @@ class QueryBuilder
         } else {
             array_push($this->conditions, "$ao $column IS NOT NULL");
         }
-        
+
         return $this;
     }
 
@@ -373,7 +378,7 @@ class QueryBuilder
      * OR WHERE IS NULL
      *
      * @param string $column
-     * @return \Inc\Core\Lib\QueryBuilder
+     * @return QueryBuilder
      */
     public function orIsNull($column)
     {
@@ -384,7 +389,7 @@ class QueryBuilder
      * OR WHERE IS NOT NULL
      *
      * @param string $column
-     * @return \Inc\Core\Lib\QueryBuilder
+     * @return QueryBuilder
      */
     public function orIsNotNull($column)
     {
@@ -397,7 +402,7 @@ class QueryBuilder
     * @param string $column
     * @param mixed $value
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function like($column, $value)
     {
@@ -411,7 +416,7 @@ class QueryBuilder
     * @param string $column
     * @param mixed $value
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function orLike($column, $value)
     {
@@ -425,7 +430,7 @@ class QueryBuilder
     * @param string $column
     * @param mixed $value
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function notLike($column, $value)
     {
@@ -439,7 +444,7 @@ class QueryBuilder
     * @param string $column
     * @param mixed $value
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function orNotLike($column, $value)
     {
@@ -453,7 +458,7 @@ class QueryBuilder
     * @param string $column
     * @param array $values
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function in($column, $values)
     {
@@ -467,7 +472,7 @@ class QueryBuilder
     * @param string $column
     * @param array $values
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function orIn($column, $values)
     {
@@ -481,7 +486,7 @@ class QueryBuilder
     * @param string $column
     * @param array $values
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function notIn($column, $values)
     {
@@ -495,7 +500,7 @@ class QueryBuilder
     * @param string $column
     * @param array $values
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function orNotIn($column, $values)
     {
@@ -509,7 +514,7 @@ class QueryBuilder
     * @param string $column
     * @param mixed $value
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
     public function set($column, $value = null)
     {
@@ -535,7 +540,7 @@ class QueryBuilder
         if ($column) {
             $this->set($column, $value);
         }
-        $st = $this->_build();
+        $st = $this->build();
         if ($lid = static::$db->lastInsertId()) {
             return $lid;
         } else {
@@ -556,7 +561,7 @@ class QueryBuilder
         if ($column) {
             $this->set($column, $value);
         }
-        return $this->_build(['only_update' => true]);
+        return $this->build(['only_update' => true]);
     }
 
     /**
@@ -564,9 +569,9 @@ class QueryBuilder
     *
     * @param string $column
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function asc($column)
+    public function asc(string $column): QueryBuilder
     {
         array_push($this->orders, "$column ASC");
         return $this;
@@ -577,9 +582,9 @@ class QueryBuilder
     *
     * @param string $column
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function desc($column)
+    public function desc(string $column): QueryBuilder
     {
         array_push($this->orders, "$column DESC");
         return $this;
@@ -588,11 +593,11 @@ class QueryBuilder
     /**
     * GROUP BY
     *
-    * @param mixed $column
+    * @param mixed $columns
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function group($columns)
+    public function group($columns): QueryBuilder
     {
         if (is_array($columns)) {
             foreach ($columns as $column) {
@@ -609,9 +614,9 @@ class QueryBuilder
     *
     * @param integer $num
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function limit($num)
+    public function limit($num): QueryBuilder
     {
         $this->limit = " LIMIT $num";
         return $this;
@@ -622,9 +627,9 @@ class QueryBuilder
     *
     * @param integer $num
     *
-    * @return \Inc\Core\Lib\QueryBuilder
+    * @return QueryBuilder
     */
-    public function offset($num)
+    public function offset(int $num): QueryBuilder
     {
         $this->offset = " OFFSET $num";
         return $this;
@@ -637,18 +642,18 @@ class QueryBuilder
     */
     public function toArray()
     {
-        $st = $this->_build();
+        $st = $this->build();
         return $st->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
     * create object with all rows
     *
-    * @return \stdObject[]
+    * @return stdObject[]
     */
     public function toObject()
     {
-        $st = $this->_build();
+        $st = $this->build();
         return $st->fetchAll(\PDO::FETCH_OBJ);
     }
 
@@ -657,7 +662,7 @@ class QueryBuilder
     *
     * @return string
     */
-    public function toJson()
+    public function toJson(): string
     {
         $rows = $this->toArray();
         return json_encode($rows, static::$options['json_options']);
@@ -666,35 +671,35 @@ class QueryBuilder
     /**
     * create array with one row
     *
-    * @param string $column
+    * @param string|null $column
     * @param mixed $value
     *
-    * @return array
+    * @return mixed
     */
-    public function oneArray($column = null, $value = null)
+    public function oneArray(string $column = null, $value = null)
     {
         if ($column !== null) {
             $this->where($column, $value);
         }
-        $st = $this->_build();
-        return $st->fetch(\PDO::FETCH_ASSOC);
+        $st = $this->build();
+        return $st->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
     * create object with one row
     *
-    * @param string $column
+    * @param string|null $column
     * @param mixed $value
     *
-    * @return \stdObject
+    * @return stdObject
     */
-    public function oneObject($column = null, $value = null)
+    public function oneObject(string $column = null, $value = null)
     {
         if ($column !== null) {
             $this->where($column, $value);
         }
-        $st = $this->_build();
-        return $st->fetch(\PDO::FETCH_OBJ);
+        $st = $this->build();
+        return $st->fetch(PDO::FETCH_OBJ);
     }
 
     /**
@@ -719,9 +724,9 @@ class QueryBuilder
     *
     * @return integer
     */
-    public function count()
+    public function count(): int
     {
-        $st = $this->_build('count');
+        $st = $this->build('count');
         return $st->fetchColumn();
     }
 
@@ -730,7 +735,7 @@ class QueryBuilder
      *
      * @return integer
      */
-    public function lastInsertId()
+    public function lastInsertId(): int
     {
         return static::$db->lastInsertId();
     }
@@ -738,26 +743,26 @@ class QueryBuilder
     /**
     * DELETE
     *
-    * @param string $column
+    * @param string|null $column
     * @param mixed $value
     */
-    public function delete($column = null, $value = null)
+    public function delete(string $column = null, $value = null): int
     {
         if ($column !== null) {
             $this->where($column, $value);
         }
-        $st = $this->_build('delete');
+        $st = $this->build('delete');
         return $st->rowCount();
     }
 
     /**
      * Create SQL query
      *
-     * @param $type `default`, `delete`, `count`
+     * @param string $type `default`, `delete`, `count`
      *
-     * @return string
+     * @return string|null
      */
-    public function toSql($type = 'default')
+    public function toSql(string $type = 'default'): ?string
     {
         $sql = '';
         $sql_where = '';
@@ -779,7 +784,7 @@ class QueryBuilder
         // if some columns have set value then UPDATE or INSERT
         if ($this->sets) {
             // get table columns
-            $table_cols = $this->_getColumns();
+            $table_cols = $this->getColumns();
 
             // Update updated_at column if exists
             if (in_array('updated_at', $table_cols) && !array_key_exists('updated_at', $this->sets)) {
@@ -795,11 +800,10 @@ class QueryBuilder
                 $sql .= $sql_where;
 
                 return $sql;
-            }
-            // if there aren't conditions, then INSERT
-            else {
-                // Update created_at column if exists
+            } else {
+                // if there aren't conditions, then INSERT
                 if (in_array('created_at', $table_cols) && !array_key_exists('created_at', $this->sets)) {
+                    // Update created_at column if exists
                     $this->set('created_at', time());
                 }
 
@@ -808,7 +812,7 @@ class QueryBuilder
                 $qs = implode(',', array_fill(0, count($this->sets), '?'));
                 $sql = "INSERT INTO $this->table($columns) VALUES($qs)";
                 $this->condition_binds = array();
-                
+
                 return $sql;
             }
         } else {
@@ -816,7 +820,7 @@ class QueryBuilder
                 // DELETE
                 $sql = "DELETE FROM $this->table";
                 $sql .= $sql_where;
-                
+
                 return $sql;
             } else {
                 // SELECT
@@ -843,7 +847,7 @@ class QueryBuilder
                 }
 
                 $sql .= $sql_where . $group_by . $order . $sql_having . $this->limit . $this->offset;
-                
+
                 return $sql;
             }
         }
@@ -857,9 +861,9 @@ class QueryBuilder
     *
     * @return PDOStatement
     */
-    protected function _build($type = 'default')
+    protected function build($type = 'default'): PDOStatement
     {
-        return $this->_query($this->toSql($type));
+        return $this->query($this->toSql($type));
     }
 
     /**
@@ -869,7 +873,7 @@ class QueryBuilder
     *
     * @return PDOStatement
     */
-    protected function _query($sql)
+    protected function query(string $sql): PDOStatement
     {
         $binds = array_merge($this->set_binds, $this->condition_binds);
         $st = static::$db->prepare($sql);
@@ -878,7 +882,7 @@ class QueryBuilder
             if (is_int($bind)) {
                 $pdo_param = \PDO::PARAM_INT;
             }
-            $st->bindValue($key+1, $bind, $pdo_param);
+            $st->bindValue($key + 1, $bind, $pdo_param);
         }
         $st->execute();
         static::$last_sqls[] = $sql;
@@ -890,9 +894,9 @@ class QueryBuilder
      *
      * @return array
      */
-    protected function _getColumns()
+    protected function getColumns(): array
     {
-        $q = $this->pdo()->query("PRAGMA table_info(".$this->table.")")->fetchAll();
+        $q = $this->pdo()->query("PRAGMA table_info(" . $this->table . ")")->fetchAll();
         return array_column($q, 'name');
     }
 }

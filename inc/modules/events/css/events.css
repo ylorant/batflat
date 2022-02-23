@@ -1,0 +1,28 @@
+.event-picture {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.event-details {
+    position: relative;
+}
+
+.event-back-button {
+    position: absolute;
+    top: -50px;
+    line-height: 20px;
+}
+
+.event-back-button i {
+    margin-right: 5px;
+}
+
+.event-description-container .map-container {
+    float: right;
+    width: 35%;
+}
+
+.event-map {
+    position: sticky;
+    height: 180px;
+}

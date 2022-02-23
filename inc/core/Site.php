@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -53,49 +54,49 @@ class Site extends Main
     * @param string $file
     * @return void
     */
-    private function drawTheme($file)
+    private function drawTheme(string $file)
     {
         $assign = [];
         $assign['notify']   = $this->getNotify();
-        $assign['powered']  = 'Powered by <a href="https://batflat.org/">Batflat</a>';
+        $assign['powered']  = $this->lang['general']['powered_by'] . ' <a href="https://batflat.org/">Batflat</a>';
         $assign['path']     = url();
-        $assign['theme']    = url(THEMES.'/'.$this->settings->get('settings.theme'));
+        $assign['theme']    = url(THEMES . '/' . $this->settings->get('settings.theme'));
         $assign['lang']     = $this->lang['name'];
 
         $assign['header']   = isset_or($this->appends['header'], ['']);
         $assign['footer']   = isset_or($this->appends['footer'], ['']);
 
         $this->tpl->set('bat', $assign);
-        echo $this->tpl->draw(THEMES.'/'.$this->settings->get('settings.theme').'/'.$file, true);
+        echo $this->tpl->draw(THEMES . '/' . $this->settings->get('settings.theme') . '/' . $file, true);
     }
 
     /**
     * load files with language
-    * @param string $lang
+    * @param string|null $lang
     * @return void
     */
-    public function loadLanguage($lang = null)
+    public function loadLanguage(string $lang = null)
     {
         $this->lang = [];
 
-        if ($lang != null && is_dir('inc/lang/'.$lang)) {
+        if ($lang != null && is_dir('inc/lang/' . $lang)) {
             $_SESSION['lang'] = $lang;
         }
 
-        if (!isset($_SESSION['lang']) || !is_dir('inc/lang/'.$_SESSION['lang'])) {
+        if (!isset($_SESSION['lang']) || !is_dir('inc/lang/' . $_SESSION['lang'])) {
             $this->lang['name'] = $this->settings->get('settings.lang_site');
             $_SESSION['lang'] = $this->lang['name'];
         } else {
             $this->lang['name'] = $_SESSION['lang'];
         }
-        
 
-        foreach (glob(MODULES.'/*/lang/'.$this->lang['name'].'.ini') as $file) {
+
+        foreach (glob(MODULES . '/*/lang/' . $this->lang['name'] . '.ini') as $file) {
             $base = str_replace($this->lang['name'], 'en_english', $file);
-            $module = str_replace([MODULES.'/', '/lang/'.$this->lang['name'].'.ini'], null, $file);
+            $module = str_replace([MODULES . '/', '/lang/' . $this->lang['name'] . '.ini'], null, $file);
             $this->lang[$module] = array_merge(parse_ini_file($base), parse_ini_file($file));
         }
-        foreach (glob('inc/lang/'.$this->lang['name'].'/*.ini') as $file) {
+        foreach (glob('inc/lang/' . $this->lang['name'] . '/*.ini') as $file) {
             $base = str_replace($this->lang['name'], 'en_english', $file);
             $pathInfo = pathinfo($file);
             $this->lang[$pathInfo['filename']] = array_merge(parse_ini_file($base), parse_ini_file($file));
@@ -108,7 +109,7 @@ class Site extends Main
     * check if user is login
     * @return bool
     */
-    public function loginCheck()
+    public function loginCheck(): bool
     {
         if (isset($_SESSION['bat_user']) && isset($_SESSION['token']) && isset($_SESSION['userAgent']) && isset($_SESSION['IPaddress'])) {
             if ($_SESSION['IPaddress'] != $_SERVER['REMOTE_ADDR']) {

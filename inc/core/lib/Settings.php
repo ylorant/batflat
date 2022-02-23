@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -11,6 +12,9 @@
 
 namespace Inc\Core\Lib;
 
+use Exception;
+use Inc\Core\Main;
+
 /**
  * Batflat modules settings
  */
@@ -19,23 +23,23 @@ class Settings
     /**
      * Instance of core class
      *
-     * @var \Inc\Core\Main
+     * @var Main
      */
-    protected $core;
+    protected Main $core;
 
     /**
      * Cached settings variables
      *
      * @var array
      */
-    protected $cache = [];
+    protected array $cache = [];
 
     /**
      * Settings constructor
      *
-     * @param \Inc\Core\Main $core
+     * @param Main $core
      */
-    public function __construct(\Inc\Core\Main $core)
+    public function __construct(Main $core)
     {
         $this->core = $core;
         $this->reload();
@@ -46,7 +50,7 @@ class Settings
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->cache;
     }
@@ -69,9 +73,9 @@ class Settings
      *
      * @param string $module Example 'module' or shorter 'module.field'
      * @param string $field OPTIONAL
-     * @return string
+     * @return mixed
      */
-    public function get($module, $field = false)
+    public function get(string $module, $field = false)
     {
         if (substr_count($module, '.') == 1) {
             list($module, $field) = explode('.', $module);
@@ -80,7 +84,7 @@ class Settings
         if (empty($field)) {
             return $this->cache[$module];
         }
-        
+
         return $this->cache[$module][$field];
     }
 
@@ -91,8 +95,9 @@ class Settings
      * @param string $field If module has field it contains value
      * @param string $value OPTIONAL
      * @return bool
+     * @throws Exception
      */
-    public function set($module, $field, $value = false)
+    public function set(string $module, string $field, $value = false): bool
     {
         if (substr_count($module, '.') == 1) {
             $value = $field;
@@ -100,9 +105,9 @@ class Settings
         }
 
         if ($value === false) {
-            throw new \Exception('Value cannot be empty');
+            throw new Exception('Value cannot be empty');
         }
-        
+
         if ($this->core->db('settings')->where('module', $module)->where('field', $field)->save(['value' => $value])) {
             $this->cache[$module][$field] = $value;
             return true;

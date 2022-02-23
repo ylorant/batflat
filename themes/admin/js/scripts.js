@@ -23,7 +23,7 @@ $('.sidebar-nav li a').click(function(e)
 });
 $('.sidebar-nav li.active ul').addClass('in');
 
-/* 3. CONFIRM BOX
+/* 3. CONFIRM BOX (BootboxJS)
 --------------------------------------------------------- */
 $(document).on('click touchstart', '[data-confirm]:not(.disabled):not([disabled])', function(evt)
 {
@@ -33,17 +33,19 @@ $(document).on('click touchstart', '[data-confirm]:not(.disabled):not([disabled]
 
     bootbox.confirm({
         message: text,
+        locale: sessionStorage.getItem('locale'),
+        closeButton: false,
         callback: function(result) {
             if(result)
             {
                 if(source.is('[type="submit"]'))
                 {
                     $(document).off('click touchstart', '[data-confirm]:not(.disabled):not([disabled])');
-                    source.click(); 
+                    source.click();
                 }
                 else if(source.is('a'))
                 {
-                    $(location).attr('href', source.attr('href'));    
+                    $(location).attr('href', source.attr('href'));
                 }
             }
         }
@@ -52,9 +54,17 @@ $(document).on('click touchstart', '[data-confirm]:not(.disabled):not([disabled]
 
 /* 4. TOOLTIP ACTIVATION
 --------------------------------------------------------- */
-$(function () {
-    $("[data-toggle='tooltip']").tooltip();
-    $("[data-toggle='popover']").popover();
+document.addEventListener("DOMContentLoaded", function(event) {
+    // Enabling Tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    // Enabling Popovers
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl)
+    });
 });
 
 /* 5. NOTIFICATION
@@ -101,23 +111,18 @@ $(function () {
 /* 7. TINYNAV
 --------------------------------------------------------- */
 $(function () {
-    $('.panel-heading .nav-tabs').tinyNav({
+    $('.card-header .nav-tabs').tinyNav({
         active: 'active'
     });
 });
 
-/* 8. CUSTOM CHECKBOXES & RADIO BUTTONS
+/* 8. REMOTE MODAL
 --------------------------------------------------------- */
-$(':checkbox').kalypto();
-$(':radio').kalypto({toggleClass: 'toggleR'});
-
-/* 9. REMOTE MODAL
---------------------------------------------------------- */
-$('a[data-toggle="modal"]').on('click', function(e) {
+$('a[data-bs-toggle="modal"]').on('click', function(e) {
     var target_modal = $(e.currentTarget).data('target');
     var remote_content = $(e.currentTarget).attr('href');
 
-    if(remote_content.indexOf('#') === 0) return; 
+    if(remote_content.indexOf('#') === 0) return;
 
     var modal = $(target_modal);
     var modalContent = $(target_modal + ' .modal-content');
@@ -126,11 +131,11 @@ $('a[data-toggle="modal"]').on('click', function(e) {
     modal.on('show.bs.modal', function () {
         modalContent.load(remote_content);
     }).modal();
-        
+
     return false;
 });
 
-/* 10. CUSTOM SELECT
+/* 9. CUSTOM SELECT
 --------------------------------------------------------- */
 $('select').each(function () {
     var options = {

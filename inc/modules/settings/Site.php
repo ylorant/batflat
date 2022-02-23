@@ -1,4 +1,5 @@
 <?php
+
 /**
 * This file is part of Batflat ~ the lightweight, fast and easy CMS
 *
@@ -17,10 +18,10 @@ class Site extends SiteModule
 {
     public function init()
     {
-        $this->_importSettings();
+        $this->importSettings();
     }
 
-    private function _importSettings()
+    private function importSettings()
     {
         $tmp = $this->core->settings->all();
         $tmp = array_merge($tmp, $tmp['settings']);

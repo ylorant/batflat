@@ -1,10 +1,10 @@
 <article class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">{$lang.general.manage}</h3>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{$lang.general.manage}</h3>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 {if: !empty($snippets)}
 				<div class="table-responsive no-margin">
 					<table class="table table-striped no-margin">
@@ -12,7 +12,7 @@
 							<tr>
 								<th>{$lang.general.name}</th>
 								<th>Tag</th>
-								<th class="text-right">{$lang.general.actions}</th>
+								<th class="text-end">{$lang.general.actions}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -20,12 +20,12 @@
 							<tr>
 								<td><a href="{$value.editURL}">{$value.name}</a></td>
 								<td><code>{$value.tag}</code></td>
-								<td class="text-right">
+								<td class="text-end">
 									<a href="{$value.editURL}" class="btn btn-xs btn-success">
-										<i class="fa fa-pencil"></i> <span class="hidden-xs">{$lang.general.edit}</span>
+										<i class="fas fa-pen"></i> <span class="d-none d-sm-block">{$lang.general.edit}</span>
 									</a>
 									<a href="{$value.delURL}" class="btn btn-xs btn-danger" data-confirm="{$lang.snippets.delete_confirm}">
-										<i class="fa fa-trash-o"></i> <span class="hidden-xs">{$lang.general.delete}</span>
+										<i class="fas fa-trash-alt"></i> <span class="d-none d-sm-block">{$lang.general.delete}</span>
 									</a>
 								</td>
 							</tr>
