@@ -71,7 +71,7 @@ function createSlug(string $text): string
  *
  * @return array
  */
-function htmlspecialchars_array(array $array)
+function htmlspecialchars_array(array $array): array
 {
     foreach ($array as $key => $value) {
         if (is_array($value)) {
@@ -91,7 +91,7 @@ function htmlspecialchars_array(array $array)
  *
  * @return array
  */
-function htmlentities_array(array $array)
+function htmlentities_array(array $array): array
 {
     foreach ($array as $key => $value) {
         if (is_array($value)) {
@@ -112,7 +112,7 @@ function htmlentities_array(array $array)
  *
  * @return void
  */
-function redirect($url, array $data = [])
+function redirect(string $url, array $data = [])
 {
     if ($data) {
         $_SESSION['REDIRECT_DATA'] = $data;
@@ -127,7 +127,7 @@ function redirect($url, array $data = [])
  *
  * @return array or null
  */
-function getRedirectData()
+function getRedirectData(): ?array
 {
     if (isset($_SESSION['REDIRECT_DATA'])) {
         $tmp = $_SESSION['REDIRECT_DATA'];
@@ -146,7 +146,7 @@ function getRedirectData()
  *
  * @return string
  */
-function currentURL($query = false)
+function currentURL(bool $query = false): ?string
 {
     if (isset_or($GLOBALS['core'], null) instanceof \Inc\Core\Admin) {
         $url = url(ADMIN.'/'.implode('/', parseURL()));
@@ -164,11 +164,11 @@ function currentURL($query = false)
 /**
  * parse URL
  *
- * @param int $key
+ * @param int|null $key
  *
  * @return mixed array, string or false
  */
-function parseURL($key = null)
+function parseURL(int $key = null)
 {
     $url = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
     $url = trim(str_replace($url, '', $_SERVER['REQUEST_URI']), '/');
@@ -235,7 +235,7 @@ function url($data = null): ?string
     if (is_array($data)) {
         $url = $url.'/'.implode('/', $data);
     } elseif ($data) {
-        $data = str_replace(BASE_DIR.'/', null, $data);
+        $data = str_replace(BASE_DIR.'/', '', $data);
         $url = $url.'/'.trim($data, '/');
     }
 
@@ -249,14 +249,16 @@ function url($data = null): ?string
 /**
  * Current domain name
  *
+ * @param bool $with_protocol
+ * @param bool $cut_www
  * @return string
  */
-function domain($with_protocol = true, $cut_www = false)
+function domain(bool $with_protocol = true, bool $cut_www = false): string
 {
     $url = parse_url(url());
 
     if ($cut_www && strpos($url['host'], 'www.') === 0) {
-        $host = str_replace('www.', null, $url['host']);
+        $host = str_replace('www.', '', $url['host']);
     } else {
         $host = $url['host'];
     }
@@ -273,7 +275,8 @@ function domain($with_protocol = true, $cut_www = false)
  *
  * @return string
  */
-function batflat_dir() {
+function batflat_dir(): string
+{
     return dirname(str_replace(ADMIN, '', $_SERVER['SCRIPT_NAME']));
 }
 
@@ -298,7 +301,7 @@ function isset_or(&$var, $alternate = null)
  *
  * @return int
  */
-function cmpver($a, $b)
+function cmpver(string $a, string $b): int
 {
     $a = explode(".", $a);
     $b = explode(".", $b);
@@ -336,13 +339,13 @@ function cmpver($a, $b)
 /**
  * Limits string to specified length and appends with $end value
  *
- * @param  string  $text  Input text
- * @param  integer $limit String max length
- * @param  string  $end   Appending variable if text is longer than limit
+ * @param string $text  Input text
+ * @param integer $limit String max length
+ * @param string $end   Appending variable if text is longer than limit
  *
  * @return string         Limited string
  */
-function str_limit($text, $limit = 100, $end = '...')
+function str_limit(string $text, int $limit = 100, string $end = '...'): string
 {
     if (mb_strlen($text, 'UTF-8') > $limit) {
         return mb_substr($text, 0, $limit, 'UTF-8').$end;
@@ -354,11 +357,11 @@ function str_limit($text, $limit = 100, $end = '...')
 /**
  * Get response headers list
  *
- * @param string $key
+ * @param string|null $key
  *
  * @return mixed Array of headers or specified header by $key
  */
-function get_headers_list($key = null)
+function get_headers_list(string $key = null)
 {
     $headers_list = headers_list();
     $headers = [];
@@ -377,12 +380,12 @@ function get_headers_list($key = null)
 /**
  * Generating random hash from specified characters
  *
- * @param  int    $length     Hash length
- * @param  string $characters Characters for hash
+ * @param int $length     Hash length
+ * @param string $characters Characters for hash
  *
  * @return string             Generated random string
  */
-function str_gen($length, $characters = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM")
+function str_gen(int $length, string $characters = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"): ?string
 {
     $return = null;
 
@@ -400,11 +403,11 @@ function str_gen($length, $characters = "1234567890qwertyuiopasdfghjklzxcvbnmQWE
 /**
  * Compressed base64_encode
  *
- * @param strin $string
+ * @param string $string
  *
  * @return string
  */
-function gz64_encode($string)
+function gz64_encode(string $string): string
 {
     return str_replace(['+', '/'], ['_', '-'], trim(base64_encode(gzcompress($string, 9)), "="));
 }
@@ -416,7 +419,7 @@ function gz64_encode($string)
  *
  * @return string
  */
-function gz64_decode($string)
+function gz64_decode(string $string): string
 {
     return gzuncompress(base64_decode(str_replace(['_', '-'], ['+', '/'], $string)));
 }
