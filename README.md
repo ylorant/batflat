@@ -6,7 +6,7 @@ Many people use complex solutions for simple pages, unnecessarily. Building this
 
 Batflat does not require MySQL database, because all the data are collected in a single file. This provides perfect portability when changing your hosting provider. Just copy all the files from one account to another. That's all. There's nothing to configure or to change. However, if you SQLite does not meet your requirements, you can quickly change the database type thanks to PDO.
 
-What's more, Batflat does not have installation wizard, because there is no such need. Right after uploading a package to an FTP server, Batflat is ready for action! Therefore, the installation process takes as much time as it takes to transfer files ;-)
+What's more, Batflat does not have installation wizard, because there is no such need. Right after uploading a package to your server, a simple "composer install" will be enough ;)
 
 Each page can have it's own individual name and URL, that makes Batflat SEO friendly. Your site may be available in multiple languages. Currently Batflat supports translation to Polish, English, French, Turkish, Swedish, Russian, Italian, Spanish, Dutch and Indonesian.
 
