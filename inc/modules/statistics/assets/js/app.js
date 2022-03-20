@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     var defaultColors = [
         "rgba(131, 58, 163, 0.5)",
         "rgba(201, 216, 88, 0.5)",
@@ -29,10 +29,12 @@ $(document).ready(function() {
         "rgba(168, 6, 226, 0.5)"
     ];
 
-    $('[data-chart]').each(function() {
+    $('[data-chart]').each(function () {
         var name = $(this).attr('id') || false;
 
-        if (name === false) return;
+        if (name === false) {
+            return;
+        }
 
         var type = $(this).data('chart');
         var labels = $(this).data('labels');
@@ -55,17 +57,19 @@ $(document).ready(function() {
                         beginAtZero: true
                     },
                 }]
-            }});
+                }});
         }
 
-        var backgroundColor = function() {
-            if (type == 'pie') return defaultColors;
+        var backgroundColor = function () {
+            if (type == 'pie') {
+                return defaultColors;
+            }
             return 'rgba(248, 190, 18, 0.2)';
         }
 
         var datasets = [];
         data = eval(data);
-        data.forEach(function(e) {
+        data.forEach(function (e) {
             datasets.push(Object.assign({
                 label: '',
                 data: [],

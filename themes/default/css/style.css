@@ -45,6 +45,13 @@ hr.small {
 .svg-inline--fa.fa-stack-2x, .svg-inline--fa.fa-stack-2x{
     width: 1em;
 }
+
+#devbar .navbar {
+    display: block;
+    background-color: transparent;
+    height: auto;
+}
+
 .navbar-custom {
     position: fixed;
     top: 0;

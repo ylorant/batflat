@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of Batflat ~ the lightweight, fast and easy CMS
  *
@@ -11,9 +12,8 @@
 
 namespace Inc\Modules\Statistics;
 
+use Inc\Core\Lib\QueryBuilder;
 use Inc\Core\SiteModule;
-
-use Inc\Modules\Statistics\DB;
 use Inc\Modules\Statistics\PHPBrowserDetector\Browser;
 use Inc\Modules\Statistics\PHPBrowserDetector\Os;
 use Inc\Core\Lib\HttpRequest;
@@ -23,21 +23,16 @@ class Site extends SiteModule
     public function init()
     {
         // Browser
-        $browser = new Browser;
-
+        $browser = new Browser();
         // OS
-        $os = new Os;
-
+        $os = new Os();
         // IP and GEO
         $ip = $_SERVER['REMOTE_ADDR'];
-
         // Get latest country or fetch new
         $country = 'Unknown';
         $latest = $this->db('statistics')->where('ip', $ip)->desc('created_at')->limit(1)->oneArray();
-
         if (!$latest) {
-            $details = json_decode(HttpRequest::get('https://freegeoip.app/json/'.$ip), true);
-
+            $details = json_decode(HttpRequest::get('https://freegeoip.app/json/' . $ip), true);
             if (!empty($details['country_code'])) {
                 $country = $details['country_code'];
             }
@@ -60,10 +55,10 @@ class Site extends SiteModule
             'ip'          => $ip,
             'browser'     => $browser->getName(),
             'useragent'   => $browser->getUserAgent()->getUserAgentString(),
-            'uniqhash'    => md5($ip.$browser->getUserAgent()->getUserAgentString()),
+            'uniqhash'    => md5($ip . $browser->getUserAgent()->getUserAgentString()),
             'country'     => $country,
             'platform'    => $os->getName(),
-            'url'         => '/'.implode('/', parseURL()),
+            'url'         => '/' . implode('/', parseURL()),
             'referrer'    => $referrer,
             'status_code' => http_response_code(),
             'bot'         => ($browser->isRobot() ? 1 : 0),
@@ -75,7 +70,7 @@ class Site extends SiteModule
         //
     }
 
-    protected function db(string $table = null)
+    protected function db(string $table = null): QueryBuilder
     {
         return new DB($table);
     }
