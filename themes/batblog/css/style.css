@@ -39,6 +39,11 @@ hr.small {
     border-width: 1px;
     border-color: white;
 }
+#devbar .navbar {
+    display: block;
+    background-color: transparent;
+    height: auto;
+}
 .navbar-custom {
     position: fixed;
     left: 0;

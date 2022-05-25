@@ -30,8 +30,9 @@ class Admin extends AdminModule
 
     /**
      * list of posts
+     * @throws Exception
      */
-    public function anyManage($page = 1)
+    public function anyManage($page = 1): string
     {
         if (isset($_POST['delete'])) {
             if (isset($_POST['post-list']) && !empty($_POST['post-list'])) {
@@ -131,7 +132,7 @@ class Admin extends AdminModule
      * @return string|void
      * @throws Exception
      */
-    public function getEdit($id = null)
+    public function getEdit(int $id = null)
     {
         $this->assign['manageURL'] = url([ADMIN, 'blog', 'manage']);
         $this->assign['coverDeleteURL'] = url([ADMIN, 'blog', 'deleteCover', $id]);
@@ -183,10 +184,10 @@ class Admin extends AdminModule
     /**
      * Save post
      *
-     * @param int $id
+     * @param int|null $id
      * @return void
      */
-    public function postSave($id = null)
+    public function postSave(int $id = null)
     {
         unset($_POST['save'], $_POST['files']);
         $tags = [];
@@ -309,7 +310,7 @@ class Admin extends AdminModule
      * @param int $id
      * @return void
      */
-    public function getDelete($id)
+    public function getDelete(int $id)
     {
         if ($post = $this->db('blog')->where('id', $id)->oneArray() && $this->db('blog')->delete($id)) {
             if ($post['cover_photo']) {
@@ -327,7 +328,7 @@ class Admin extends AdminModule
      * remove post cover
      * @param int $id
      */
-    public function getDeleteCover($id)
+    public function getDeleteCover(int $id)
     {
         if ($post = $this->db('blog')->where('id', $id)->oneArray()) {
             unlink(UPLOADS . "/blog/" . $post['cover_photo']);
