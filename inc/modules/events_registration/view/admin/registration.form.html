@@ -1,0 +1,64 @@
+<article>
+    <form name="page" class="row" action="{?=url(ADMIN.'/events_registration/save/'.isset_or($registration.form.id, null))?}" method="POST" enctype="multipart/form-data">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <label>{$registration.title}</label>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="event">Evènement spécifique pour l'inscription</label>
+                        <select id="event" name="event_id" class="form-control">
+                            <option value = "-1">{$lang.events_registration.no_event}</option>
+                            {loop: $registration.events}
+                            <option value="{$value.id}" {if: $registration.form.event_id == $value.id}selected{/if}>{$value.name}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.events_registration.runner_name}</label>
+                        <input type="text" name="runner_name" class="form-control" value="{$registration.form.runner_name}"/>
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.events_registration.game_name}</label>
+                        <input type="text" name="game_name" class="form-control" value="{$registration.form.game_name}"/>
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.events_registration.game_category}</label>
+                        <input type="text" name="game_category" class="form-control" value="{$registration.form.game_category}"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="estimatedTime">{$lang.events_registration.estimated_time}</label>
+                        <input type="text" class="form-control duration" id="estimatedTime" name="estimated_time"
+                               placeholder="1h30m40s" value="{$registration.form.estimated_time_text}" required/>
+                        <input type="hidden" name="duration" id="duration" value="{$registration.form.estimated_time}"/>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" id="race" name="race" onclick="displayOpponents()"
+                                      value="1" {if: $registration.form.race== 1}checked{/if} /> {$lang.events_registration.race}</label>
+                    </div>
+                    <div class="form-group race-opponents">
+                        <label for="raceOpponents">{$lang.events_registration.race_opponents}</label>
+                        <input type="text" id="raceOpponents" name="race_opponents" class="form-control" value="{$registration.form.race_opponents}"/>
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.events_registration.comments}</label>
+                        <textarea name="comment" class="form-control" rows="4">{$registration.form.comment}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{$lang.general.settings}</h3>
+                </div>
+                <div class="card-body">
+                    <input type="submit" name="save" value="{$lang.general.save}" class="btn btn-primary"/>
+                    <a href="{$registration.manageURL}" class="btn btn-default">{$lang.general.cancel}</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</article>

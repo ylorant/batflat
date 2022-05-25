@@ -1,0 +1,86 @@
+<div class="registration">
+    <div name="description" id="description">
+        {$description}
+    </div>
+    <form name="registration" id="registration" method="POST" action="{$_SERVER['REQUEST_URI']}">
+        <div class="registration-container">
+            <div id="containerOne" class="container-one full-width">
+                <div class="form-group mt-0 {?= empty($events) ? 'd-none' : '' ?}">
+                    <label for="event">Evènement spécifique pour l'inscription</label>
+                    <select id="event" name="event" class="form-control custom-select">
+                        <option value = "-1">Aucun (pas de préférence)</option>
+                        {loop: $events}
+                        <option value="{$value.id}">{$value.name}</option>
+                        {/loop}
+                    </select>
+                </div>
+
+                <div class="form-group {?= empty($events) ? 'mt-0' : '' ?}">
+                    <label for="existingRuns">Re-soumettre à nouveau une run</label>
+                    <div class="input-group">
+                        <select id="existingRuns" class="existing-runs form-control custom-select" onchange="populateForm()">
+                            <option value = "-1">Non (nouvelle run)</option>
+                        </select>
+                        <a class="btn btn-outline-secondary" title="Supprimer la run sélectionnée" onclick="deleteRunFromLocalStorage()"><i class="fas fa-trash fa-sm"></i></a>
+                        <a href="#" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="{$lang.events_registration.localstorage_disclaimer}">
+                            <i class="fas fa-question-circle fa-2x mx-2"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="runnerName">{$lang.events_registration.runner_name}</label>
+                    <input type="text" class="form-control" id="runnerName" name="runner_name"
+                           placeholder="{$lang.events_registration.runner_name}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="gameName">{$lang.events_registration.game_name}</label>
+                    <input type="text" class="form-control" id="gameName" name="game_name"
+                           placeholder="{$lang.events_registration.game_name}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="gameCategory">{$lang.events_registration.game_category}</label>
+                    <input type="text" class="form-control" id="gameCategory" name="game_category"
+                           placeholder="{$lang.events_registration.game_category}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="estimatedTime">{$lang.events_registration.estimated_time}</label>
+                    <input type="text" class="form-control duration" id="estimatedTime" name="estimated_time"
+                           placeholder="1h30m40s" required/>
+                    <input type="hidden" name="duration" id="duration" value="0"/>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="race" name="race" value="1" onclick="displayOpponents()"/>&nbsp;{$lang.events_registration.race}
+                    </label>
+                </div>
+                <div class="form-group race-opponents">
+                    <label for="raceOpponents">{$lang.events_registration.race_opponents}</label>
+                    <input type="text" class="form-control" id="raceOpponents" name="race_opponents"
+                           placeholder="{$lang.events_registration.race_opponents_example}"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="comments">{$lang.events_registration.comments}</label>
+                    <textarea id="comments" class="form-control" name="comment" 
+                              placeholder="{$lang.events_registration.comments}" rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- antispam field -->
+        <div class="form-group" id="antispam">
+            <input type="text" name="title" autofill="off" required/>
+        </div>
+        <script>
+            (function () {
+                const e = document.getElementById('antispam');
+                e.parentNode.removeChild(e);
+            })();
+        </script>
+        <!-- /antispam field -->
+
+        <button type="submit" name="send-registration" class="btn btn-default">{$lang.events_registration.send}</button>
+    </form>
+</div>

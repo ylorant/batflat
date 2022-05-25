@@ -1,0 +1,26 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{$lang.events_registration.export_advanced}</h3>
+            </div>
+            
+            <div class="card-body">
+                <form method="post" action="#">
+                    <div class="form-group">
+		                <label>{$lang.events_registration.filter_by_event}</label>
+		                <select name="event" class="form-control">
+                            <option value="">{$lang.events_registration.filter_all_events}</option>
+                            <option value="-1">{$lang.events_registration.filter_no_event}</option>
+		                	{loop: $export.events}
+		                        <option value="{$value.id}">{$value.name}</option>
+		                    {/loop}
+		                </select>
+		            </div>
+
+                    <button type="submit" title="{$lang.events_registration.export}" name="export" class="btn btn-primary">Exporter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</article>

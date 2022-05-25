@@ -1,0 +1,89 @@
+<article>
+	<form name="page" class="row"  action="{?=url(ADMIN.'/members_sta/save/'.isset_or($member.form.id, null))?}" method="POST" enctype="multipart/form-data">
+		<div class="col-md-8">
+		    <div class="card">
+                <div class="card-header">
+		            <h3 class="card-title">{$member.title}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>{$lang.general.name}*</label>
+                        <input type="text" name="name" class="form-control" value="{$member.form.name}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.members_sta.role}</label>
+                        <input type="text" name="role" class="form-control" value="{$member.form.role}" />
+                    </div>
+                    <div class="form-group no-margin">
+                        <label>{$lang.members_sta.description}*</label>
+                        <div class="font-italic">Note: Essayer de rester en dessous de 280 caractères (un tweet).</div>
+                        <div class="progress-wrapper">
+                            <div class="progress no-margin collapse">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar">
+                                </div>
+                            </div>
+                        </div>
+                        <textarea name="description" rows="16" class="editor form-control" data-editor="{$member.editor}" required>{$member.form.description}</textarea>
+                    </div>
+                </div>
+            </div>
+	    </div>
+
+	    <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{$lang.general.settings}</h3>
+                </div>
+                <div class="card-body">
+        	    	<div class="form-group">
+                        <label>{$lang.members_sta.picture}</label>
+                        <div>
+                            <img src="{$member.form.pictureUrl}" width="96" height="96" class="img-thumbnail" id="picturePreview" style="cursor:pointer;" onclick="$('input[name=picture]').click()" />
+                            <input type="file" name="picture" class="form-control d-none" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{$lang.members_sta.twitch_handle}</label>
+                        <input type="text" name="twitch_handle" class="form-control" value="{$member.form.twitch_handle}" />
+                    </div>
+
+                    <div class="form-group">
+		                <label>{$lang.general.lang}</label>
+		                <select name="lang" class="form-control">
+		                	{loop: $member.langs}
+		                    <option {$value.attr}>{$value.name}</option>
+		                    {/loop}
+		                </select>
+		            </div>
+
+                    <div class="form-group">
+                        <label>{$lang.members_sta.status}</label>
+                        <select name="status" class="form-control">
+                        	<option value="0"{if: $member.form.status == 0} selected{/if}>{$lang.members_sta.inactive}</option>
+                        	<option value="1"{if: $member.form.status == 1} selected{/if}>{$lang.members_sta.active}</option>
+                    	</select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><input type="checkbox" name="markdown" value="1" {if: $member.form.markdown == 1}checked{/if} /> {$lang.members_sta.markdown}</label>
+                    </div>
+
+                    <input type="submit" name="save" value="{$lang.general.save}" class="btn btn-primary" />
+                    <a href="{$member.manageURL}" class="btn btn-default">{$lang.general.cancel}</a>
+                </div>
+            </div>
+        </div>
+	</form>
+</article>
+
+<script>
+    // Avatar
+    var reader  = new FileReader();
+    reader.addEventListener("load", function() {
+        $("#picturePreview").attr('src', reader.result);
+    }, false);
+    $("input[name=picture]").change(function() {
+        reader.readAsDataURL(this.files[0]);
+    });
+</script>

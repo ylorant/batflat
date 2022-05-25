@@ -1,0 +1,79 @@
+<aside>
+    <div class="widget-container">
+    	<h2 class="widget-title">
+        	Nous suivre
+        </h2>
+
+        <div class="widget-content">
+        	{$snippet.nous-suivre}
+		</div>
+
+		<div class="widget-twitch-status text-center">
+			<a href="https://twitch.tv/{$twitchChannel}">
+				{if: $twitchOnline}
+					<span class="text-success"><i class="fab fa-twitch" aria-hidden="true"></i> EN LIGNE</span>
+				{else}
+					<span class="text-danger"><i class="fab fa-twitch" aria-hidden="true"></i> HORS LIGNE</span>
+				{/if}
+			</a>
+		</div>
+
+		<div class="widget-social text-center">
+			<a href="https://twitter.com/speedthemall" class="mr-3 text-twitter">
+				<i class="fab fa-3x fa-twitter" aria-hidden="true"></i>
+			</a>
+
+			<a href="https://twitch.tv/{$twitchChannel}" class="mr-3 text-twitch">
+				<i class="fab fa-3x fa-twitch" aria-hidden="true"></i>
+			</a>
+
+			<a href="https://discord.gg/wJJjkw6WhS" class="text-discord">
+				<i class="fab fa-3x fa-discord" aria-hidden="true"></i>
+			</a>
+		</div>
+    </div>
+
+    <div class="widget-container">
+    	<h2 class="widget-title">
+        	{$lang.events.upcoming_events}
+        </h2>
+
+        <div class="widget-content">
+			<ul>
+				{if: !empty($upcomingEvents)}
+					{loop: $upcomingEvents}
+						<li class="ellipsis">
+							<a href="{?= url([$eventsBaseSlug, $eventsEventSlug, $value.id]) ?}">
+								<span class="fw-bold">{$value.start_at_short}</span> - {$value.name}
+							</a>
+						</li>
+					{/loop}
+				{else}
+					<li>
+						{$lang.events.no_upcoming_event}
+					</li>
+				{/if}
+			</ul>
+		</div>
+	</div>
+
+    <div class="widget-container">
+    	<h2 class="widget-title">
+        	{$lang.blog.latest_posts}
+        </h2>
+
+        <div class="widget-content">
+			<ul>
+				{if: !empty($latestPosts)}
+					{loop: $latestPosts}
+						<li><a href="{?= url([$blogBaseSlug, 'post', $value.slug]) ?}">{$value.title}</a></li>
+					{/loop}
+				{else}
+					<li>
+						{$lang.blog.no_post}
+					</li>
+				{/if}
+			</ul>
+		</div>
+	</div>
+</aside>

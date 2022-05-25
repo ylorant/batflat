@@ -1,0 +1,61 @@
+{template: inc/header.html}
+
+<header style="background-image: url('{$bat.theme}/img/bg.jpg');">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="header-title">{$page.title}</h1>
+                {if: isset($page.description)}
+                <hr>
+                <p class="header-desc">{$page.description}</p>
+                {/if}
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="section">
+                {if: $bat.notify}
+                <div id="notify" class="alert alert-{$bat.notify.type}">{$bat.notify.text}</div>
+                {/if}
+                {$page.content}
+            </div>
+
+            <div class="row pagelist">
+                {loop: $subpages}
+                <div class="col-sm-6 col-md-4 mb-2">
+                    <div class="pagelist-page">
+                        <div class="post-img-content">
+                            <a href="{$value.slug}">
+                                {if: $value.picture}
+                                <img src="{$value.picture}" class="img-responsive"/>
+                                {else}
+                                <img src="{$bat.theme}/img/bg.jpg" class="img-responsive"/>
+                                {/if}
+                                <span class="post-title"><b>{$value.title}</b></span>
+                            </a>
+                        </div>
+                        <div class="content">
+                            <div>
+                                {$value.summary}
+                            </div>
+                            <div class="post-link">
+                                <a href="{$value.slug}" class="">Voir la suite...</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/loop}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {template: inc/sidebar.html}
+        </div>
+    </div>
+</div>
+
+{template: inc/footer.html}

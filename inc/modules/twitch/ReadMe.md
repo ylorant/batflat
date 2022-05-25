@@ -1,0 +1,1 @@
+Paste `{$twitchEmbed}` in a template file to display the dedicated Twitch channel in an embed inclusion.

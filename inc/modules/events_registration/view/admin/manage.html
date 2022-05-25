@@ -1,0 +1,83 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{$lang.general.manage}</h3>
+            </div>
+
+            <div class="card-body">
+                <form method="post">
+                    <div class="clearfix">
+                        <h3 class="pull-left" style="margin-top:5px;">{$lang.events_registration.registration_count} {$registrations.registrationCount}</h3>
+                        <button type="submit" title="{$lang.events_registration.export}" name="export" class="btn btn-info" disabled><i class="fas fa-download"></i> {$lang.events_registration.export} (<span>0</span>)</button>
+                        <a href="{?= url([ADMIN, 'events_registration', 'export']) ?}" title="{$lang.events_registration.export_advanced}" name="export" class="btn btn-info"><i class="fas fa-download"></i> {$lang.events_registration.export_advanced}</a>
+                        <button type="submit" title="{$lang.general.delete}" name="delete" class="btn btn-danger pull-right" data-confirm="{$lang.events_registration.registration_del_confirm}" disabled><i class="fas fa-trash"></i> {$lang.general.delete} (<span>0</span>)</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped no-margin">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" class="check-all" /></th>
+                                <th>{$lang.events_registration.manage_runner_name}</th>
+                                <th>{$lang.events_registration.manage_game_name}</th>
+                                <th>{$lang.events_registration.manage_game_category}</th>
+                                <th>{$lang.events_registration.manage_estimated_time}</th>
+                                <th>{$lang.events_registration.manage_race}</th>
+                                <th>{$lang.events_registration.manage_event}</th>
+                                <th>{$lang.events_registration.manage_created_at}</th>
+                                <th class="text-end">{$lang.general.actions}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {if: !empty($registrations.registrations)}
+                            {loop: $registrations.registrations}
+                            <tr>
+                                <td><input type="checkbox" name="registration-list[]" class="list-item" value="{$value.id}" /></td>
+                                <td>{$value.runner_name}</td>
+                                <td>{$value.game_name}</td>
+                                <td>{$value.game_category}</td>
+                                <td>{$value.estimated_time}</td>
+                                <td>{$value.race}</td>
+                                <td>{$value.event}</td>
+                                <td>{$value.created_at}</td>
+                                <td class="text-end">
+                                    <a href="{$value.editURL}" class="btn btn-primary btn-xs">
+                                        <i class="fas fa-pen"></i> <span class="d-none d-sm-block">{$lang.general.edit}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {/loop}
+                            {else}
+                            <tr><td colspan="9" class="text-center">{$lang.general.empty_array}</td></tr>
+                            {/if}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                {$registrations.pagination}
+            </div>
+        </div>
+    </div>
+</article>
+
+<script>
+    $(".list-item").change(function() {
+        if($('.list-item:checked').length > 0) {
+            $('button[name="delete"]').prop("disabled", false)
+            $('button[name="export"]').prop("disabled", false)
+        } else {
+            $('button[name="delete"]').prop("disabled", true)
+            $('button[name="export"]').prop("disabled", true)
+        }
+        $('button[name="delete"] span').text($(".list-item:checked").length);
+        $('button[name="export"] span').text($(".list-item:checked").length);
+    }).change();
+    $(".check-all").change(function(e) {
+        if($(this).is(":checked"))
+            $('.list-item').prop('checked', true);
+        else
+            $('.list-item').prop('checked', false);
+
+        $('.list-item').change();
+    });
+</script>

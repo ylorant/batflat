@@ -1,0 +1,20 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">{$lang.general.settings}</div>
+            <div class="card-body">
+                <form name="user" action="{?=url(ADMIN.'/events_registration/saveSettings')?}" method="POST">
+                    <div class="form-group">
+                        <label>{$lang.events_registration.slug}</label>
+                        <input type="text" class="form-control" name="slug" value="{$events_registration.slug}">
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.events_registration.description}</label>
+                        <textarea rows="7" class="editor form-control" name="description" data-editor="{$events_registration.editor}">{$events_registration.description}</textarea>
+                    </div>
+                    <input type="submit" name="save" class="btn btn-primary" value="{$lang.general.save}">
+                </form>
+            </div>
+        </div>
+    </div>
+</article>
