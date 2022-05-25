@@ -50,7 +50,7 @@
                         </div>
 
                         <div class="post-footer">
-                            <a href="{$value.url}" class="post-read-more">{$lang.blog_sta.readmore}</a>
+                            <a href="{$value.url}" class="post-read-more">{$lang.blog.readmore}</a>
                         </div>
 
                     </article>
@@ -59,13 +59,13 @@
                     <ul class="pager">
                         {if: isset($prev)}
                         <li>
-                            <a href="{$prev.url}">{$lang.blog_sta.newer}</a>
+                            <a href="{$prev.url}">{$lang.blog.newer}</a>
                         </li>
                         {/if}
 
                         {if: isset($next)}
                         <li>
-                            <a href="{$next.url}">{$lang.blog_sta.older}</a>
+                            <a href="{$next.url}">{$lang.blog.older}</a>
                         </li>
                         {/if}
                     </ul>
