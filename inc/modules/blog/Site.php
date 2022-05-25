@@ -302,7 +302,7 @@ class Site extends SiteModule
                         ->toArray();
         $assign = [
             'title' => '#' . $tag['name'],
-            'desc' => $this->settings('blog_sta.desc'),
+            'desc' => $this->settings('blog.desc'),
             'posts' => []
         ];
         foreach ($rows as $row) {

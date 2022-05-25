@@ -50,8 +50,7 @@
 
                 <form name="editor" action="{$_SERVER['REQUEST_URI']}" method="POST">
                     <div class="form-group">
-                        <textarea name="content" rows="20" class="form-control" id="editor">{$theme.content}</textarea>
-                        <script>$("#editor").markItUp(markItUp_html).highlight({whiteSpace: 'pre', lang: '{$theme.lang}'});</script>
+                        <textarea name="content" rows="20" class="editor form-control" id="editor">{$theme.content}</textarea>
                     </div>
                     <input type="submit" name="save" class="btn btn-primary" value="{$lang.general.save}" {if: FILE_LOCK}disabled{/if}/>
                 </form>

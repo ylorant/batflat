@@ -1,54 +1,15 @@
-function insertEditor(type) {
+function insertEditor()
+{
     const editor = document.getElementsByClassName('editor');
 
-    if (type === 'wysiwyg') {
-        const easyMdeEditors = document.getElementsByClassName('EasyMDEContainer');
-        for (let i = 0; i < editor.length; ++i) {
-            if (easyMdeEditors.length) {
-                for (let i = 0; i < easyMdeEditors.length; ++i) {
-                    // Remove EasyMDE if exists
-                    easyMdeEditors[i].parentNode.removeChild(easyMdeEditors[i]);
-                    $('#textarea-tabs').removeClass('markItUp');
-                }
-            }
-
-            const sunEditor = SUNEDITOR.create(editor[i], {
-                lang: SUNEDITOR_LANG['en'],
-                buttonList: [
-                    ['undo', 'redo'],
-                    ['font', 'fontSize', 'formatBlock'],
-                    ['paragraphStyle', 'blockquote'],
-                    ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript'],
-                    ['fontColor', 'hiliteColor', 'textStyle'],
-                    ['removeFormat'],
-                    '/', // Line break
-                    ['outdent', 'indent'],
-                    ['align', 'horizontalRule', 'list', 'lineHeight'],
-                    ['table', 'link', 'image', 'video', 'audio'],
-                    ['fullScreen', 'showBlocks', 'codeView'],
-                    ['preview', 'print'],
-                    ['save'],
-                ]
-            });
-        }
-    } else {
-        const sunEditors = document.getElementsByClassName('sun-editor');
-        if (sunEditors.length) {
-            // Remove SunEditor if exists
-            for (let i = 0; i < sunEditors.length; ++i) {
-                sunEditors[i].parentNode.removeChild(sunEditors[i]);
-            }
-        }
-
-        // Add EasyMDE
-        for (let i = 0; i < editor.length; ++i) {
-            const easyMDE = new EasyMDE({element: editor[i]});
-            easyMDE.codemirror.on('change', () => {
-                editor[i].parentNode.getElementsByTagName('textarea')[0].value = easyMDE.value();
-            });
-        }
-        $('#textarea-tabs').addClass('markItUp');
+    // Add EasyMDE (No SunEditor here because we need to edit actual HTML tags)
+    for (let i = 0; i < editor.length; ++i) {
+        const easyMDE = new EasyMDE({element: editor[i]});
+        easyMDE.codemirror.on('change', () => {
+            editor[i].parentNode.getElementsByTagName('textarea')[0].value = easyMDE.value();
+        });
     }
+
 }
 
 function sendFile(file, editor)
@@ -64,7 +25,7 @@ function sendFile(file, editor)
             var progress = $('.progress:first').clone();
             progress = (progress.fadeIn()).appendTo($('.progress-wrapper'));
 
-            xhr.upload.addEventListener("progress", function (evt) {
+            xhr.upload.addEventListener('progress', function (evt) {
                 if (evt.lengthComputable) {
                     var percentComplete = evt.loaded / evt.total;
                     percentComplete = parseInt(percentComplete * 100);
@@ -131,7 +92,7 @@ function ResizeImage (files, uploadHandler) {
             canvas.width = width;
             canvas.height = height;
 
-            ctx = canvas.getContext("2d");
+            ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
             canvas.toBlob(function (blob) {
@@ -143,18 +104,6 @@ function ResizeImage (files, uploadHandler) {
     reader.readAsDataURL(uploadFile);
 }
 
-function selectEditor() {
-    if ($('.editor').data('editor') === 'wysiwyg') {
-        insertEditor('wysiwyg');
-    } else {
-        insertEditor('html');
-    }
-}
-
-$(document).ready(function() {
-    selectEditor();
-
-    $("#toggle-form label").click(function() {
-        $("#toggle-form .textarea").slideToggle("slow");
-    });
+$(document).ready(function () {
+    insertEditor();
 });
