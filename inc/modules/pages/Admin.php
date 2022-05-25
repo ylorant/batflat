@@ -12,6 +12,7 @@
 
 namespace Inc\Modules\Pages;
 
+use Exception;
 use Inc\Core\AdminModule;
 
 class Admin extends AdminModule
@@ -28,7 +29,7 @@ class Admin extends AdminModule
     /**
     * list of pages
     */
-    public function getManage($page = 1)
+    public function getManage($page = 1): string
     {
         // lang
         if (!empty($_GET['lang'])) {
@@ -44,7 +45,7 @@ class Admin extends AdminModule
         $totalRecords = $this->db('pages')->where('lang', $lang)->toArray();
         $pagination = new \Inc\Core\Lib\Pagination($page, count($totalRecords), 10, url([ADMIN, 'pages', 'manage', '%d']));
         $this->assign['pagination'] = $pagination->nav();
-// list
+        // list
         $rows = $this->db('pages')->where('lang', $lang)
                 ->limit($pagination->offset() . ', ' . $pagination->getRecordsPerPage())
                 ->toArray();
@@ -67,7 +68,7 @@ class Admin extends AdminModule
     /**
     * add new page
     */
-    public function getAdd()
+    public function getAdd(): string
     {
         $this->assign['editor'] = $this->settings('settings', 'editor');
         $this->addHeaderFiles();
@@ -88,8 +89,11 @@ class Admin extends AdminModule
 
 
     /**
-    * edit page
-    */
+     * edit page
+     *
+     * @return string|void
+     * @throws Exception
+     */
     public function getEdit($id)
     {
         $this->assign['editor'] = $this->settings('settings', 'editor');
@@ -187,8 +191,8 @@ class Admin extends AdminModule
     public function postEditorUpload()
     {
         header('Content-type: application/json');
-        $dir    = UPLOADS . '/pages';
-        $error    = null;
+        $dir = UPLOADS . '/pages';
+        $error = null;
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
         }
@@ -221,10 +225,12 @@ class Admin extends AdminModule
     }
 
     /**
-    * list of theme's templates
-    * @param string $selected
-    * @return array
-    */
+     * list of theme's templates
+     *
+     * @param string $selected
+     * @return array
+     * @throws Exception
+     */
     private function getTemplates($selected = null)
     {
         $theme = $this->settings('settings', 'theme');
