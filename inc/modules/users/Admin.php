@@ -20,6 +20,7 @@ class Admin extends AdminModule
     public const STATUS_ACTIVE = 0;
     public const STATUS_INACTIVE = 1;
     public const STATUS_BLOCKED = 2;
+    public const DEFAULT_AVATAR = MODULES . '/users/img/default.png';
 
     private array $assign = [];
 
@@ -59,13 +60,16 @@ class Admin extends AdminModule
         if (!empty($redirectData = getRedirectData())) {
             $this->assign['form'] = filter_var_array($redirectData, FILTER_SANITIZE_STRING);
         } else {
-            $this->assign['form'] = ['username' => '', 'email' => '', 'fullname' => '', 'description' => ''];
+            $this->assign['form'] = [
+                'username' => '', 'status' => '', 'email' => '', 'fullname' => '', 'description' => ''
+            ];
         }
 
 
         $this->assign['title'] = $this->lang('new_user');
         $this->assign['modules'] = $this->getModules('all');
-        $this->assign['avatarURL'] = url(MODULES . '/users/img/default.jpg');
+        $this->assign['statuses'] = $this->getStatuses();
+        $this->assign['avatarURL'] = url(self::DEFAULT_AVATAR);
 
         return $this->draw('form.html', ['users' => $this->assign]);
     }
@@ -87,7 +91,7 @@ class Admin extends AdminModule
             $this->assign['statuses'] = $this->getStatuses();
             $this->assign['avatarURL'] = url(UPLOADS . '/users/' . $user['avatar']);
 
-            return $this->draw('form.html', ['users' => $this->assign]);
+            return $this->draw('form.html', ['users' => $this->assign, 'myId' => $this->core->getUserInfo('id')]);
         } else {
             redirect(url([ADMIN, 'users', 'manage']));
         }
@@ -152,7 +156,7 @@ class Admin extends AdminModule
                 $img = new Image();
 
                 if (empty($photo) && !$id) {
-                    $photo = MODULES . '/users/img/default.jpg';
+                    $photo = self::DEFAULT_AVATAR;
                 }
                 if ($img->load($photo)) {
                     if ($img->getInfos('width') < $img->getInfos('height')) {

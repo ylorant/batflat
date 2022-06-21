@@ -63,6 +63,7 @@ class Admin extends Main
         $username = $this->getUserInfo('fullname', null, true);
         $access = $this->getUserInfo('access');
 
+        $this->assign['user']          = $this->getUserInfo('id');
         $this->assign['username']      = !empty($username) ? $username : $this->getUserInfo('username');
         $this->assign['notify']        = $this->getNotify();
         $this->assign['path']          = url();
@@ -112,7 +113,11 @@ class Admin extends Main
         $row = $this->module->{$name};
 
         if ($row && ($details = $this->getModuleInfo($name))) {
-            if (($this->getUserInfo('access') == 'all') || in_array($name, explode(',', $this->getUserInfo('access')))) {
+            if (
+                ($this->getUserInfo('access') == 'all') ||
+                in_array($name, explode(',', $this->getUserInfo('access'))) ||
+                ($name === 'users' && $method === 'edit' && $this->getUserInfo('id') === $params[0])
+            ) {
                 $anyMethod = 'any' . ucfirst($method);
                 $method = strtolower($_SERVER['REQUEST_METHOD']) . ucfirst($method);
 

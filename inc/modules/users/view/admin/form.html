@@ -24,9 +24,9 @@
                     </div>
                     <div class="form-group">
                         <label>{$lang.users.status}</label>
-                        <select name="status" class="form-control" required>
+                        <select name="status" class="form-control" {if: $users.form.id == $myId}disabled{/if} required>
                         {loop: $users.statuses}
-                        <option value="{$value.value}" {?= $users.form.status == $value.value ? 'selected' : '' ?}>{$value.title}</option>
+                        <option value="{$value.value}" {?=($users.form.status == $value.value) ? 'selected' : '' ?}>{$value.title}</option>
                         {/loop}
                         </select>
                     </div>
@@ -44,7 +44,7 @@
                     </div>
     	            <div class="form-group">
     	                <label>{$lang.users.access}</label>
-    	                <select name="access[]" multiple class="form-control" data-keep-open="true" data-use-dimmer="false" data-options-height="126px" {if: isset_or($users.form.id, 0) == 1}disabled{/if} required>
+    	                <select name="access[]" multiple class="form-control" data-keep-open="true" data-use-dimmer="false" data-options-height="126px" {if: isset_or($users.form.id, 0) == 1 || $users.form.id == $myId}disabled{/if} required>
     	                	{loop: $users.modules}
     	                	<option value="{$value.dir}" data-left="<i class='{$value.icon-style} fa-{$value.icon}'></i>" {$value.attr}>{$value.name}</option>
     	                	{/loop}

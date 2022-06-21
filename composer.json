@@ -11,6 +11,7 @@
         "ext-intl": "*",
         "ext-curl": "*",
         "ext-fileinfo": "*",
+        "ext-gd": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
@@ -19,8 +20,8 @@
         "ext-libxml": "*",
         "ext-simplexml": "*",
         "phpfastcache/phpfastcache": "^7.1",
-        "eluceo/ical": "^2.3.0",
-        "league/csv": "^9.7",
+        "eluceo/ical": "^2.5",
+        "league/csv": "^9.8",
         "twbs/bootstrap": "^5.1",
         "makeusabrew/bootbox": "^5.5",
         "fortawesome/font-awesome": "^5.15"

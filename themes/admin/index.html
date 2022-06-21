@@ -61,7 +61,7 @@
                         {if: $bat.has_update}
                         <li class="d-none d-md-block"><a href="{?= url([ADMIN, 'settings', 'updates']) ?}" class="small"><span class="label label-danger">{$lang.general.update_available}</span></a></li>
                         {/if}
-                        <li class="hello d-none d-md-block"><a href="#"><i class="fas fa-fw fa-user"></i> <span>{?= sprintf($lang.general.hello, $bat.username) ?}</span></a></li>
+                        <li class="hello d-none d-md-block"><a href="{?=url(ADMIN.'/users/edit/'.$bat.user)?}" title="{$lang.general.my_account}"><i class="fas fa-fw fa-user"></i> <span>{?= sprintf($lang.general.hello, $bat.username) ?}</span></a></li>
                         <li class="d-none d-md-block">
                             <a href="{?=url('')?}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{$lang.general.show_site}">
                                 <i class="fas fa-globe"></i>
