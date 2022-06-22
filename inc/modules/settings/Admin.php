@@ -13,6 +13,7 @@
 namespace Inc\Modules\Settings;
 
 use DateTimeZone;
+use Exception;
 use Inc\Core\AdminModule;
 use Inc\Core\Lib\License;
 use Inc\Core\Lib\HttpRequest;
@@ -25,7 +26,7 @@ use Inc\Modules\Settings\Inc\RecursiveDotFilterIterator;
 class Admin extends AdminModule
 {
     private array $assign = [];
-    private string $feed_url = "http://feed.sruu.pl";
+    private string $feed_url = "https://feed.sruu.pl";
 
     public function init()
     {
@@ -148,9 +149,12 @@ class Admin extends AdminModule
         redirect(url([ADMIN,'settings','general']));
     }
 
+    /**
+     * @throws Exception
+     */
     public function anyTheme($theme = null, $file = null): string
     {
-        $this->core->addCSS(url(MODULES . '/settings/css/admin/settings.css'));
+        $this->addHeaderFiles();
 
         if (empty($theme) && empty($file)) {
             $this->tpl->set('settings', $this->settings('settings'));
@@ -162,15 +166,6 @@ class Admin extends AdminModule
                 $this->notify('success', $this->lang('theme_changed'));
                 redirect(url([ADMIN, 'settings', 'theme']));
             }
-
-            // Source code editor
-            $this->core->addCSS(url('/inc/jscripts/editor/markitup.min.css'));
-            $this->core->addCSS(url('/inc/jscripts/editor/markitup.highlight.min.css'));
-            $this->core->addCSS(url('/inc/jscripts/editor/sets/html/set.min.css'));
-            $this->core->addJS(url('/inc/jscripts/editor/highlight.min.js'));
-            $this->core->addJS(url('/inc/jscripts/editor/markitup.min.js'));
-            $this->core->addJS(url('/inc/jscripts/editor/markitup.highlight.min.js'));
-            $this->core->addJS(url('/inc/jscripts/editor/sets/html/set.min.js'));
 
             $this->assign['files'] = $this->getThemeFiles($file, $theme);
 
@@ -572,6 +567,9 @@ class Admin extends AdminModule
         exit();
     }
 
+    /**
+     * @throws Exception
+     */
     public function checkUpdate(): bool
     {
         $settings = $this->settings('settings');
@@ -598,10 +596,30 @@ class Admin extends AdminModule
         return false;
     }
 
+    /**
+     * module JavaScript
+     */
+    public function getJavascript()
+    {
+        header('Content-type: text/javascript');
+        echo $this->draw(MODULES . '/settings/js/admin/settings.js');
+        exit();
+    }
+
+    protected function addHeaderFiles()
+    {
+        parent::addHeaderFiles();
+
+        // MODULE SCRIPTS
+        $this->core->addJS(url([ADMIN, 'settings', 'javascript']));
+        // MODULE CSS
+        $this->core->addCSS(url(MODULES . '/settings/css/admin/settings.css'));
+    }
+
     private function updateRequest($resource, $params = [])
     {
         $output = HttpRequest::post($this->feed_url . $resource, $params);
-        if ($output === false) {
+        if (!$output) {
             $output = HttpRequest::getStatus();
         } else {
             $output = json_decode($output, true);
@@ -675,6 +693,7 @@ class Admin extends AdminModule
      * @param null $selected
      * @param null $theme
      * @return array
+     * @throws Exception
      */
     private function getThemeFiles($selected = null, $theme = null): array
     {
@@ -878,7 +897,7 @@ class Admin extends AdminModule
             foreach (new RecursiveIteratorIterator(new RecursiveDotFilterIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS))) as $object) {
                 try {
                     $bytestotal += $object->getSize();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                 }
             }
         }

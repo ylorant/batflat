@@ -53,7 +53,7 @@ return [
             mkdir(UPLOADS . "/users", 0777);
         }
 
-        copy(MODULES . '/users/img/default.jpg', UPLOADS . '/users/' . $avatar);
+        copy(MODULES . '/users/img/default.png', UPLOADS . '/users/' . $avatar);
     },
     'uninstall'     =>  function () use ($core) {
         $core->db()->pdo()->exec("DROP TABLE `users`");

@@ -2691,7 +2691,6 @@ a:focus,a:hover {
 
 #navbar-wrapper .navbar ul.navbar-nav li.hello a {
     text-decoration: none;
-    pointer-events: none
 }
 
 #navbar-wrapper .navbar ul.navbar-nav li.hello a span {

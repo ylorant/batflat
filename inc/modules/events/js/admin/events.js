@@ -62,7 +62,7 @@ function insertEditor(type)
         for (let i = 0; i < editor.length; ++i) {
             const easyMDE = new EasyMDE({element: editor[i]});
             easyMDE.codemirror.on('change', () => {
-                easyMDE.parentNode.getElementsByTagName('textarea')[0].value = easyMDE.value();
+                editor[i].parentNode.getElementsByTagName('textarea')[0].value = easyMDE.value();
             });
         }
     }
