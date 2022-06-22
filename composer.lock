@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c648a8977ce96ee42716240d5218c8c5",
+    "content-hash": "fab54a3b10a7c1c0b30d81e5680f6bd8",
     "packages": [
         {
             "name": "components/bootstrap",
@@ -124,16 +124,16 @@
         },
         {
             "name": "eluceo/ical",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markuspoerschke/iCal.git",
-                "reference": "f9a74fefe5582f7e8444e0e87058e36c62e1b005"
+                "reference": "3bf16b2a4f9250184fd16b13cbf7771051e4e7b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markuspoerschke/iCal/zipball/f9a74fefe5582f7e8444e0e87058e36c62e1b005",
-                "reference": "f9a74fefe5582f7e8444e0e87058e36c62e1b005",
+                "url": "https://api.github.com/repos/markuspoerschke/iCal/zipball/3bf16b2a4f9250184fd16b13cbf7771051e4e7b1",
+                "reference": "3bf16b2a4f9250184fd16b13cbf7771051e4e7b1",
                 "shasum": ""
             },
             "require": {
@@ -184,7 +184,7 @@
                 "issues": "https://github.com/markuspoerschke/iCal/issues",
                 "source": "https://github.com/markuspoerschke/iCal"
             },
-            "time": "2022-02-13T19:32:24+00:00"
+            "time": "2022-04-26T12:14:20+00:00"
         },
         {
             "name": "fortawesome/font-awesome",
@@ -341,16 +341,16 @@
         },
         {
             "name": "makeusabrew/bootbox",
-            "version": "v5.5.2",
+            "version": "v5.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/makeusabrew/bootbox.git",
-                "reference": "a03ee478fd24b30ceac303e995c4756b8ef0224b"
+                "reference": "b6e0fc20a919f1d5ecc5710cd885fa76887696b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/makeusabrew/bootbox/zipball/a03ee478fd24b30ceac303e995c4756b8ef0224b",
-                "reference": "a03ee478fd24b30ceac303e995c4756b8ef0224b",
+                "url": "https://api.github.com/repos/makeusabrew/bootbox/zipball/b6e0fc20a919f1d5ecc5710cd885fa76887696b2",
+                "reference": "b6e0fc20a919f1d5ecc5710cd885fa76887696b2",
                 "shasum": ""
             },
             "require": {
@@ -378,9 +378,9 @@
             "description": "Wrappers for JavaScript alert(), confirm() and other flexible dialogs using the Bootstrap framework",
             "support": {
                 "issues": "https://github.com/makeusabrew/bootbox/issues",
-                "source": "https://github.com/makeusabrew/bootbox/tree/v5.5.2"
+                "source": "https://github.com/makeusabrew/bootbox/tree/v5.5.3"
             },
-            "time": "2020-11-30T09:03:28+00:00"
+            "time": "2022-04-28T01:12:17+00:00"
         },
         {
             "name": "phpfastcache/phpfastcache",
@@ -648,25 +648,25 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.0.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "c726b64c1ccfe2896cb7df2e1331c357ad1c8ced"
+                "reference": "e8b495ea28c1d97b5e0c121748d6f9b53d075c66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/c726b64c1ccfe2896cb7df2e1331c357ad1c8ced",
-                "reference": "c726b64c1ccfe2896cb7df2e1331c357ad1c8ced",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/e8b495ea28c1d97b5e0c121748d6f9b53d075c66",
+                "reference": "e8b495ea28c1d97b5e0c121748d6f9b53d075c66",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.2"
+                "php": ">=7.1"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "3.0-dev"
+                    "dev-main": "2.5-dev"
                 },
                 "thanks": {
                     "name": "symfony/contracts",
@@ -695,7 +695,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.0.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v2.5.1"
             },
             "funding": [
                 {
@@ -711,7 +711,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-11-01T23:48:49+00:00"
+            "time": "2022-01-02T09:53:40+00:00"
         },
         {
             "name": "twbs/bootstrap",
@@ -918,13 +918,15 @@
     "platform": {
         "php": ">=7.4",
         "ext-json": "*",
-        "ext-mbstring": "*",
+        "ext-iconv": "*",
         "ext-intl": "*",
         "ext-curl": "*",
         "ext-fileinfo": "*",
-        "ext-pdo": "*",
+        "ext-mbstring": "*",
         "ext-openssl": "*",
+        "ext-pdo": "*",
         "ext-zip": "*",
+        "ext-zlib": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*"
     },

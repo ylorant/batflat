@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Image
  *
- * Easy image handling using PHP 5  and the GDlib
+ * Easy image handling using PHP 5 and the GDlib
  *
  * @copyright     Copyright 2010-2011, ushi <ushi@porkbox.net>
  * @link          https://github.com/ushis/PHP-Image-Class
@@ -16,7 +17,6 @@ namespace Inc\Core\Lib;
  */
 class Image
 {
-
     /**
      * Image resource
      *
@@ -31,7 +31,7 @@ class Image
      * @var string
      * @access private
      */
-    private $type = 'png';
+    private string $type = 'png';
 
     /**
      * Width of the image in pixel
@@ -39,7 +39,7 @@ class Image
      * @var integer
      * @access private
      */
-    private $width;
+    private int $width;
 
     /**
      * Height of the image in pixel
@@ -47,26 +47,27 @@ class Image
      * @var integer
      * @access private
      */
-    private $height;
+    private int $height;
 
     /**
      * Return infos about the image
      *
-     * @return array image infos
+     * @param string|null $what Specified field to return from image infos (can be width, height or type)
+     * @return array|int|string image infos (array for all data, int or string for specified data)
      * @access public
      */
-    public function getInfos($what = null)
+    public function getInfos(string $what = null)
     {
         if ($what !== null && in_array($what, ['width', 'height', 'type'])) {
             return $this->{$what};
         }
 
-        return array(
+        return [
             'width' => $this->width,
             'height' => $this->height,
             'type' => $this->type,
             'resource' => $this->image,
-        );
+        ];
     }
 
     /**
@@ -76,16 +77,17 @@ class Image
      * @return array Color in rgb
      * @access public
      */
-    private function hex2rgb($hex)
+    private function hex2rgb(string $hex): array
     {
+        $rgb = [];
         $hex = str_replace('#', '', $hex);
         $hex = (preg_match('/^([a-fA-F0-9]{3})|([a-fA-F0-9]{6})$/', $hex)) ? $hex : '000';
 
         switch (strlen($hex)) {
             case 3:
-                $rgb['r'] = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
-                $rgb['g'] = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
-                $rgb['b'] = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
+                $rgb['r'] = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
+                $rgb['g'] = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
+                $rgb['b'] = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
                 break;
 
             case 6:
@@ -105,12 +107,12 @@ class Image
      * @return boolean true if resource was created
      * @access public
      */
-    public function load($path)
+    public function load(string $path): bool
     {
         if (empty($path)) {
             return false;
         }
-            
+
         $file = @fopen($path, 'r');
 
         if (!$file) {
@@ -152,11 +154,11 @@ class Image
     *
     * @param integer $width Width of the image
     * @param integer $height Height of the image
-    * @param string $background Background color in hexadecimal code
+    * @param string|null $background Background color in hexadecimal code
     * @return boolean true if resource was created
     * @access public
     */
-    public function create($width, $height, $background = null)
+    public function create(int $width, int $height, string $background = null): bool
     {
         if ($width > 0 && $height > 0) {
             $this->image = imagecreatetruecolor($width, $height);
@@ -175,7 +177,7 @@ class Image
             }
             return true;
         }
-        
+
         return false;
     }
 
@@ -187,14 +189,14 @@ class Image
      * @return boolean true if image was resized
      * @access public
      */
-    public function resize($width, $height = 0)
+    public function resize(int $width, int $height = 0): bool
     {
         if ($width <= 0 && $height <= 0) {
             return false;
         } elseif ($width > 0 && $height <= 0) {
-            $height = $this->height*$width/$this->width;
+            $height = $this->height * $width / $this->width;
         } elseif ($width <= 0 && $height > 0) {
-            $width = $this->width*$height/$this->height;
+            $width = $this->width * $height / $this->height;
         }
 
         $image = imagecreatetruecolor($width, $height);
@@ -216,7 +218,7 @@ class Image
      * @param integer $height Height of cutout
      * @access public
      */
-    public function crop($x, $y, $width, $height)
+    public function crop(int $x, int $y, int $width, int $height)
     {
         $image = imagecreatetruecolor($width, $height);
         imagealphablending($image, false);
@@ -235,7 +237,7 @@ class Image
      * @access public
      * @return void
      */
-    public function fit($width, $height)
+    public function fit(int $width, int $height)
     {
         if ($this->width > $this->height) {
             $this->resize(0, $height);
@@ -252,7 +254,7 @@ class Image
      * @param integer $angle in degree
      * @access public
      */
-    public function rotate($angle)
+    public function rotate(int $angle)
     {
         $this->image = imagerotate($this->image, $angle, 0);
     }
@@ -267,7 +269,7 @@ class Image
     * @param string $color Color in hexadecimal code
     * @access public
     */
-    public function rectangle($x1, $y1, $x2, $y2, $color)
+    public function rectangle(int $x1, int $y1, int $x2, int $y2, string $color)
     {
         $rgb = $this->hex2rgb($color);
         $color = imagecolorallocate($this->image, $rgb['r'], $rgb['g'], $rgb['b']);
@@ -283,7 +285,7 @@ class Image
     * @param string $color Color in hexadecimal code
     * @access public
     */
-    public function ellipse($x, $y, $width, $height, $color)
+    public function ellipse(int $x, int $y, int $width, int $height, string $color)
     {
         $rgb = $this->hex2rgb($color);
         $color = imagecolorallocate($this->image, $rgb['r'], $rgb['g'], $rgb['b']);
@@ -296,11 +298,11 @@ class Image
     * @param string $color Color in hexadecimal code
     * @access public
     */
-    public function polygon($points, $color)
+    public function polygon(array $points, string $color)
     {
         $rgb = $this->hex2rgb($color);
         $color = imagecolorallocate($this->image, $rgb['r'], $rgb['g'], $rgb['b']);
-        $num = count($points)/2;
+        $num = count($points) / 2;
         imagefilledpolygon($this->image, $points, $num, $color);
     }
     /**
@@ -310,7 +312,7 @@ class Image
     * @param string $color Color in hexadecimal code
     * @access public
     */
-    public function line($points, $color)
+    public function line(array $points, string $color)
     {
         $rgb = $this->hex2rgb($color);
         $color = imagecolorallocate($this->image, $rgb['r'], $rgb['g'], $rgb['b']);
@@ -329,7 +331,7 @@ class Image
      * @param string $text Text
      * @access public
      */
-    public function write($x, $y, $font, $size, $angle, $color, $text)
+    public function write(int $x, int $y, string $font, int $size, int $angle, string $color, string $text)
     {
         $rgb = $this->hex2rgb($color);
         $color = imagecolorallocate($this->image, $rgb['r'], $rgb['g'], $rgb['b']);
@@ -344,7 +346,7 @@ class Image
      * @param mixed $y Y-coordinate
      * @access public
      */
-    public function merge($img, $x, $y)
+    public function merge(Image $img, $x, $y)
     {
         $infos = $img->getInfos();
 
@@ -354,7 +356,7 @@ class Image
                 break;
 
             case 'right':
-                $x = $this->width-$infos['width'];
+                $x = $this->width - $infos['width'];
                 break;
 
             default:
@@ -367,7 +369,7 @@ class Image
                 break;
 
             case 'bottom':
-                $y = $this->height-$infos['height'];
+                $y = $this->height - $infos['height'];
                 break;
 
             default:
@@ -384,7 +386,7 @@ class Image
      * @param string $type Filetype
      * @access public
      */
-    public function show($type = 'png')
+    public function show(string $type = 'png')
     {
         $type = ($type != 'gif' && $type != 'jpeg' && $type != 'png') ? $this->type : $type;
 
@@ -409,11 +411,11 @@ class Image
      * Saves image
      *
      * @param string $path Path to location
-     * @param string $type Filetype
+     * @param int $quality
      * @return boolean true if image was saved
      * @access public
      */
-    public function save($path, $quality = 90)
+    public function save(string $path, int $quality = 90): bool
     {
         $dir = dirname($path);
         $type = pathinfo($path, PATHINFO_EXTENSION);
@@ -428,7 +430,7 @@ class Image
 
         if ($type != 'gif' && $type != 'jpeg' && $type != 'jpg' && $type != 'png') {
             $type = $this->type;
-            $path .= '.'.$type;
+            $path .= '.' . $type;
         }
 
         switch ($type) {
@@ -436,7 +438,8 @@ class Image
                 imagegif($this->image, $path);
                 break;
 
-            case 'jpeg': case 'jpg':
+            case 'jpeg':
+            case 'jpg':
                 imagejpeg($this->image, $path, $quality);
                 break;
 

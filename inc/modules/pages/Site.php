@@ -13,6 +13,7 @@
 namespace Inc\Modules\Pages;
 
 use Inc\Core\Lib\Event;
+use Inc\Core\Lib\Parsedown;
 use Inc\Core\SiteModule;
 
 class Site extends SiteModule
@@ -76,7 +77,7 @@ class Site extends SiteModule
         }
 
         if (intval($row['markdown'])) {
-            $parsedown = new \Inc\Core\Lib\Parsedown();
+            $parsedown = new Parsedown();
             $row['content'] = $parsedown->text($row['content']);
         }
 
