@@ -60,6 +60,9 @@ class Admin extends AdminModule
             'site' => $this->getLanguages($settings['lang_site'], 'selected'),
             'admin' => $this->getLanguages($settings['lang_admin'], 'selected')
         ];
+
+        $settings['faviconDeleteURL'] = url([ADMIN, 'settings', 'deleteFavicon']);
+
         $settings['themes'] = $this->getThemes();
         $settings['pages'] = $this->getPages($lang);
         $settings['timezones'] = $this->getTimezones();
@@ -100,7 +103,8 @@ class Admin extends AdminModule
     public function postSaveGeneral()
     {
         unset($_POST['save']);
-        if (checkEmptyFields(array_keys($_POST), $_POST)) {
+        $arrayKeys = array_keys($_POST);
+        if (checkEmptyFields(array_diff($arrayKeys, ['favicon']), $_POST)) {
             $this->notify('failure', $this->lang('empty_inputs', 'general'));
             redirect(url([ADMIN, 'settings', 'general']), $_POST);
         } else {
@@ -110,6 +114,24 @@ class Admin extends AdminModule
                 $_POST['autodetectlang'] = isset_or($_POST['autodetectlang'], 0);
             }
 
+            $faviconTmpPath = null;
+            $newFaviconName = null;
+            if (isset($_FILES['favicon']) && $_FILES['favicon']['error'] === UPLOAD_ERR_OK) {
+                $faviconTmpPath = $_FILES['favicon']['tmp_name'];
+                $faviconName = $_FILES['favicon']['name'];
+                $faviconSize = $_FILES['favicon']['size'];
+                $faviconCmps = explode(".", $faviconName);
+                $faviconExtension = strtolower(end($faviconCmps));
+
+                if ($faviconExtension == 'ico' && $faviconSize > 0) {
+                    $newFaviconName = md5(time() . $faviconName) . '.' . $faviconExtension;
+                    $_POST['favicon'] = $newFaviconName;
+                } else {
+                    $_POST['favicon'] = '';
+                    $errors++;
+                }
+            }
+
             foreach ($_POST as $field => $value) {
                 if (!$this->db('settings')->where('module', 'settings')->where('field', $field)->save(['value' => $value])) {
                     $errors++;
@@ -117,12 +139,32 @@ class Admin extends AdminModule
             }
 
             if (!$errors) {
+                if (!file_exists(UPLOADS . "/settings")) {
+                    mkdir(UPLOADS . "/settings", 0777, true);
+                }
+                if (!empty($faviconTmpPath) && !empty($newFaviconName)) {
+                    move_uploaded_file($faviconTmpPath, UPLOADS . "/settings/" . $newFaviconName);
+                }
+
                 $this->notify('success', $this->lang('save_settings_success'));
             } else {
                 $this->notify('failure', $this->lang('save_settings_failure'));
             }
 
             unset($_SESSION['lang']);
+            redirect(url([ADMIN, 'settings', 'general']));
+        }
+    }
+
+    /**
+     * remove post cover
+     */
+    public function getDeleteFavicon()
+    {
+        if ($post = $this->db('settings')->where('module', 'settings')->where('field', 'favicon')->oneArray()) {
+            unlink(UPLOADS . "/settings/" . $post['value']);
+            $this->db('settings')->where('module', 'settings')->where('field', 'favicon')->save(['value' => '']);
+            $this->notify('success', $this->lang('favicon_deleted'));
             redirect(url([ADMIN, 'settings', 'general']));
         }
     }
@@ -248,8 +290,6 @@ class Admin extends AdminModule
         $this->tpl->set('translations', $translations);
         $this->tpl->set('module', $_GET['source']);
         $this->tpl->set('settings', $settings);
-
-        //unset($translations, $settings);
 
         return $this->draw('translation.html');
     }
@@ -889,7 +929,7 @@ class Admin extends AdminModule
         return $files;
     }
 
-    private function directorySize($path)
+    private function directorySize($path): int
     {
         $bytestotal = 0;
         $path = realpath($path);

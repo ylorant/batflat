@@ -1,5 +1,5 @@
 <article>
-    <form class="row" action="{?=url(ADMIN.'/settings/saveGeneral')?}" method="POST">
+    <form class="row" action="{?=url(ADMIN.'/settings/saveGeneral')?}" method="POST" enctype="multipart/form-data">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -59,6 +59,18 @@
                             <option value="{$value.name}" {$value.attr}>{$value.name}</option>
                             {/loop}
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.general.favicon}</label>
+                        {if: !empty($settings.favicon)}
+                        <div style="position:relative;">
+                            <img src="{?= url('uploads/settings/'.$settings.favicon) ?}" class="img-responsive" />
+                            <input type="file" name="favicon" class="form-control" />
+                            <a href="{$settings.faviconDeleteURL}" class="btn btn-danger" style="position:absolute; right:5px; top:5px;">{$lang.general.delete}</a>
+                        </div>
+                        {else}
+                        <input type="file" name="favicon" class="form-control"/>
+                        {/if}
                     </div>
                     <div class="form-group">
                          <label>{$lang.settings.footer}</label>
