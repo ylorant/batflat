@@ -5,5 +5,4 @@ uploads/
 inc/data/*.sdb
 /vendor/
 .idea/
-deployment.ini
-deployment.log
+phploy.*
