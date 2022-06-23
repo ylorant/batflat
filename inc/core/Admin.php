@@ -71,6 +71,8 @@ class Admin extends Main
         $this->assign['has_update']    = $this->module ? $this->module->settings->checkUpdate() : false;
         $this->assign['update_access'] = ($access == 'all') || in_array('settings', explode(',', $access)) ? true : false;
 
+        $favicon = $this->settings->get('settings.favicon');
+        $this->assign['favicon']  = !empty($favicon) ? url() . '/uploads/settings/' . $favicon : url() . '/favicon.ico';
         $this->assign['header'] = isset_or($this->appends['header'], ['']);
         $this->assign['footer'] = isset_or($this->appends['footer'], ['']);
 
