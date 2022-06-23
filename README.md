@@ -37,6 +37,11 @@ Only you have to do is to open [pull requests](https://github.com/RomainOdeval/b
 ## Tutorials
 * [Setup Batflat on Ubuntu with Nginx](https://websiteforstudents.com/setup-batflat-on-ubuntu-18-04-16-04-18-10-with-nginx-mariadb-and-php-7-2-fpm/)
 
+## Deployment
+See [PHPloy](https://github.com/banago/PHPloy) to deploy the site on STA server. 
+To launch a deploy, after set an ini file, use this command :
+`php vendor/bin/phploy`
+
 ## Credits
 
 * **[Eztharia](https://github.com/Eztharia)** - French translation of website and CMS
