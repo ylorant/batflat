@@ -26,6 +26,9 @@ class Site extends SiteModule
     /** @var string */
     protected string $moduleDirectory = MODULES . '/blog';
 
+    /** @var string */
+    protected string $defaultCover = MODULES . '/blog/img/default.jpg';
+
     /**
      * @throws Exception
      */
@@ -42,6 +45,8 @@ class Site extends SiteModule
         $this->core->addCSS(url($this->moduleDirectory . '/assets/css/blog.css'));
 
         $this->baseSlug = $this->settings('blog.slug') ? ltrim($this->settings('blog.slug'), '/') : $this->baseSlug;
+        $this->defaultCover = $this->settings('blog.default_cover') ? UPLOADS . '/blog/' . ltrim($this->settings('blog.default_cover'), '/') : $this->defaultCover;
+
         $this->tpl->set('blogBaseSlug', $this->baseSlug);
         $this->tpl->set('latestPosts', $this->getLatestPosts());
         $this->tpl->set('allTags', function () {
@@ -117,15 +122,16 @@ class Site extends SiteModule
             }
 
             if (!empty($row)) {
-            // get dependences
+                // get dependences
                 $row['author'] = $this->db('users')->where('id', $row['user_id'])->oneArray();
                 $row['author']['name'] = !empty($row['author']['fullname']) ? $row['author']['fullname'] : $row['author']['username'];
                 $row['author']['avatar'] = url(UPLOADS . '/users/' . $row['author']['avatar']);
-            // cover
-                if (isset($row['cover_photo'])) {
+
+                // cover
+                if (!empty($row['cover_photo'])) {
                     $row['cover_url'] = url(UPLOADS . '/blog/' . $row['cover_photo']) . '?' . $row['published_at'];
                 } else {
-                    $row['cover_url'] = url(MODULES . '/blog/img/default.jpg') . '?' . $row['published_at'];
+                    $row['cover_url'] = url($this->defaultCover);
                 }
 
                 $row['url'] = url('blog/post/' . $row['slug']);
@@ -216,10 +222,10 @@ class Site extends SiteModule
             $row['author'] = $this->db('users')->where('id', $row['user_id'])->oneArray();
             $row['author']['name'] = !empty($row['author']['fullname']) ? $row['author']['fullname'] : $row['author']['username'];
         // cover
-            if (isset($row['cover_photo'])) {
+            if (!empty($row['cover_photo'])) {
                 $row['cover_url'] = url(UPLOADS . '/blog/' . $row['cover_photo']) . '?' . $row['published_at'];
             } else {
-                $row['cover_url'] = url(MODULES . '/blog/img/default.jpg') . '?' . $row['published_at'];
+                $row['cover_url'] = url($this->defaultCover);
             }
 
             // tags
@@ -310,10 +316,10 @@ class Site extends SiteModule
             $row['author'] = $this->db('users')->where('id', $row['user_id'])->oneArray();
             $row['author']['name'] = !empty($row['author']['fullname']) ? $row['author']['fullname'] : $row['author']['username'];
         // cover
-            if (isset($row['cover_photo'])) {
+            if (!empty($row['cover_photo'])) {
                 $row['cover_url'] = url(UPLOADS . '/blog/' . $row['cover_photo']) . '?' . $row['published_at'];
             } else {
-                $row['cover_url'] = url(MODULES . '/blog/img/default.jpg') . '?' . $row['published_at'];
+                $row['cover_url'] = url($this->defaultCover);
             }
 
             // tags
@@ -391,10 +397,10 @@ class Site extends SiteModule
 
                 $row['content'] = preg_replace('/{(.*?)}/', '', strip_tags($row['content']));
                 $row['url'] = url('blog/post/' . $row['slug']);
-                if (isset($row['cover_photo'])) {
+                if (!empty($row['cover_photo'])) {
                     $row['cover_url'] = url(UPLOADS . '/blog/' . $row['cover_photo']) . '?' . $row['published_at'];
                 } else {
-                    $row['cover_url'] = url(MODULES . '/blog/img/default.jpg') . '?' . $row['published_at'];
+                    $row['cover_url'] = url($this->defaultCover);
                 }
                 $row['published_at'] = (new DateTime(date("YmdHis", $row['published_at'])))->format('D, d M Y H:i:s O');
             }

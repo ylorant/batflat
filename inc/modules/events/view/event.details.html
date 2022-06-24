@@ -7,7 +7,9 @@
     </div>
 
     {if: isset($event.picture) && !empty($event.picture)}
-    <img src="{?= url('uploads/events/'.$event.picture) ?}" class="event-picture"/>
+    <div class="event-picture">
+        <img src="{?= url('uploads/events/'.$event.picture) ?}"/>
+    </div>
     {/if}
 
     <div class="event-description-container">
