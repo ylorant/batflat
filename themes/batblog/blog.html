@@ -33,7 +33,7 @@
                 <div class="post-meta">
                     {?= sprintf($lang.blog.posted, $value.author.name, $value.published_at) ?} | <a href="{$value.url}#disqus_thread" data-disqus-identifier="{$value.disqus_identifier}">{$lang.blog.no_comments}</a> | {loop: $value.tags as $tag}{if: $key != 0}, {/if}<a href="{$tag.url}">{$tag.name}</a>{/loop}
                 </div>
-                {if: $value.cover_photo}
+                {if: $value.cover_url}
                 <div class="post-image">
                     <a href="{$value.url}">
                         <img src="{$value.cover_url}" alt="{$value.title}">
