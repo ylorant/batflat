@@ -35,6 +35,7 @@ class Site extends SiteModule
 {
     public const DEFAULT_SLUG = 'planning';
     public const DEFAULT_EVENT_SLUG = 'event';
+    public const DEFAULT_HORARO_URL = 'https://horaro.org';
     public const DEFAULT_ICAL_NAME = 'cal';
 
     /** @var string */
@@ -48,6 +49,9 @@ class Site extends SiteModule
 
     /** @var string|null */
     protected ?string $moduleDirectory = null;
+    
+    /** @var HoraroAPI Horaro API Client instance */
+    protected HoraroAPI $horaro;
 
     /** @var string */
     protected string $timeZone = 'Europe/Paris';
@@ -77,6 +81,9 @@ class Site extends SiteModule
 
         $this->moduleDirectory = MODULES . '/events';
         $this->core->addCSS(url($this->moduleDirectory . '/assets/css/style.css'));
+        
+        $this->horaro = new HoraroAPI();
+        $this->horaro->setErrorHandler([$this, 'onHoraroError']);
 
         $this->tpl->set('eventsBaseSlug', $this->baseSlug);
         $this->tpl->set('eventsEventSlug', $this->eventSlug);
@@ -181,6 +188,8 @@ class Site extends SiteModule
      * GET: /planning/event/(:id)/$this->icalName.ics
      *
      * Generate an iCal file for one or many events
+     * NB : generated only this event if not linked to an Horaro event
+     * (because else, "event details" page display a direct link to Horaro iCal file)
      *
      * @param array|int $eventIds
      * @return string
@@ -201,7 +210,11 @@ class Site extends SiteModule
                 $this->assign['locale'] = $this->getCurrentLang();
                 $this->assign['event'] = $this->getEventDetails($eventId);
                 $this->assign['time_zone'] = $this->timeZone;
+                
+                $parsedIcalUrl = parse_url($this->assign['event']['ical_url']);
+                $parsedHoraroUrl = parse_url(self::DEFAULT_HORARO_URL);
 
+                if ($parsedIcalUrl['host'] !== $parsedHoraroUrl['host']) {
                     // 1. Create Event domain entity
                     $event = new Event();
 
@@ -250,6 +263,7 @@ class Site extends SiteModule
                 }
 
                     $events[] = $event;
+                }
             }
 
             // 2. Create Calendar domain entity
@@ -279,6 +293,8 @@ class Site extends SiteModule
      * GET: /planning/event/$this->icalName.ics
      *
      * Generate an iCal file all upcoming events
+     * NB : generated only this event if not linked to an Horaro event
+     * (because else, "event details" page display a direct link to Horaro iCal file)
      *
      * @return string
      * @throws Exception
@@ -382,8 +398,12 @@ class Site extends SiteModule
             'building_address',
             'latitude',
             'longitude',
+            'channel_name',
+            'horaro_event_id',
+            'horaro_schedule_id',
             'lang',
-            'markdown'
+            'markdown',
+            'registration'
         ];
 
         if (empty($arrayIds)) {
@@ -403,6 +423,11 @@ class Site extends SiteModule
                 ->where('published_at', '<=', time())
                 ->select($fields)
                 ->toArray();
+        }
+        
+        foreach ($rows as &$row) {
+            $row['horaro_url'] =
+                self::DEFAULT_HORARO_URL . '/' . $row['horaro_event_id'] . '/' . $row['horaro_schedule_id'];
         }
 
         return $rows;
@@ -424,9 +449,13 @@ class Site extends SiteModule
             }
             $schedule = $schedules[0];
 
-            $icalUrl = url(
-                $this->baseSlug . '/' . $this->eventSlug . '/' . $eventId . '/' . $this->icalName . '.ics'
-            );
+             if (property_exists($schedule, 'horaro_url')) {
+                $icalUrl = $schedule->horaro_url . '.ical';
+            } else {
+                $icalUrl = url(
+                    $this->baseSlug . '/' . $this->eventSlug . '/' . $eventId . '/' . $this->icalName . '.ics'
+                );
+            }
 
             $event = [
                 'id' => $eventId,
@@ -440,10 +469,20 @@ class Site extends SiteModule
                 'building_address' => $schedule->database_building_address,
                 'latitude' => $schedule->database_latitude,
                 'longitude' => $schedule->database_longitude,
+                'horaro_id' => property_exists($schedule, 'id') ? $schedule->id : null,
+                'horaro_name' => property_exists($schedule, 'name') ? $schedule->name : null,
+                'horaro_start' => property_exists($schedule, 'twitch') ? date(
+                    $this->lang('date_format'),
+                    strtotime($schedule->start)
+                ) : null,
                 'website' => property_exists($schedule, 'website') ? $schedule->website : null,
+                'channel_name' => property_exists(
+                    $schedule,
+                    'twitch'
+                ) ? $schedule->twitch : $schedule->database_channel,
                 'ical_url' => $icalUrl,
                 'items' => [],
-                // Only displaying the first 3 columns of data
+                // Only displaying the first 3 columns of data from Horaro
                 'columns' => isset($schedule->columns) ? array_slice($schedule->columns, 0, 3) : []
             ];
             $scheduleItems = $schedule->items ?? [];
@@ -509,6 +548,11 @@ class Site extends SiteModule
 
         foreach ($events as $key => $event) {
             $scheduleData[$key] = new stdClass();
+            
+            $schedule = $this->horaro->getSchedule($event['horaro_schedule_id'], $event['horaro_event_id']);
+            if (!empty($schedule)) {
+                $scheduleData[$key] = $schedule;
+            }
 
             $scheduleData[$key]->database_id = $event['id'];
             $scheduleData[$key]->database_name = $event['name'];
@@ -520,6 +564,11 @@ class Site extends SiteModule
             $scheduleData[$key]->database_longitude = $event['longitude'];
             $scheduleData[$key]->database_start = $event['start_at'];
             $scheduleData[$key]->database_end = $event['end_at'];
+            $scheduleData[$key]->database_channel = $event['channel_name'];
+            if (!empty($event['horaro_event_id']) && !empty($event['horaro_schedule_id'])) {
+                $scheduleData[$key]->horaro_url =
+                    self::DEFAULT_HORARO_URL . '/' . $event['horaro_event_id'] . '/' . $event['horaro_schedule_id'];
+            }
         }
 
         return $scheduleData;
