@@ -309,7 +309,7 @@ class Admin extends AdminModule
      */
     public function getSettings(): string
     {
-        $this->assign['editor'] = $this->settings('settings.editor');
+        $this->assign['editor'] = $this->settings('settings', 'editor');
         $this->addHeaderFiles();
 
         $value = $this->settings('events_registration');
@@ -327,7 +327,7 @@ class Admin extends AdminModule
     {
         $update = [
             'slug' => $_POST['slug'],
-            'description' => $_POST['description'],
+            'description' => $this->tpl->noParse($_POST['description']),
         ];
 
         $errors = 0;

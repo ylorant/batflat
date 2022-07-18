@@ -10,6 +10,7 @@ namespace Inc\Modules\Events;
 
 use Exception;
 use Inc\Core\AdminModule;
+use Inc\Core\Lib\Image;
 use Inc\Core\Lib\Pagination;
 
 /**
@@ -102,6 +103,8 @@ class Admin extends AdminModule
                 $row['start_at'] = date('d-m-Y H:i', $row['start_at']);
                 $row['end_at'] = date('d-m-Y H:i', $row['end_at']);
                 $row['published_at'] = date("d-m-Y H:i", $row['published_at']);
+                $row['registration'] ?
+                    $row['registration'] = $this->lang('say_yes', 'general') : $row['registration'] = $this->lang('say_no', 'general');
 
                 $row['editURL'] = url([ADMIN, 'events', 'edit', $row['id']]);
                 $row['delURL'] = url([ADMIN, 'events', 'delete', $row['id']]);
@@ -371,7 +374,7 @@ class Admin extends AdminModule
         }
 
         if (isset($_FILES['picture']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
 
             if ($img->load($_FILES['picture']['tmp_name'])) {
                 $_POST['picture'] = $this->getPictureName($_POST['name']) . '-' . mt_rand(1, 999) . "." . $img->getInfos('type');
@@ -543,7 +546,7 @@ class Admin extends AdminModule
         }
 
         if (isset($_FILES['file']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
 
             if ($img->load($_FILES['file']['tmp_name'])) {
                 $imgPath = $dir . '/' . time() . '.' . $img->getInfos('type');
