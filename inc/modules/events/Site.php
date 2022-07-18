@@ -24,6 +24,7 @@ use Eluceo\iCal\Domain\ValueObject\TimeSpan;
 use Eluceo\iCal\Domain\ValueObject\Uri;
 use Eluceo\iCal\Presentation\Factory\CalendarFactory;
 use Exception;
+use Horaro\Client as HoraroClient;
 use Inc\Core\SiteModule;
 use IntlDateFormatter;
 use stdClass;
@@ -50,8 +51,8 @@ class Site extends SiteModule
     /** @var string|null */
     protected ?string $moduleDirectory = null;
     
-    /** @var HoraroAPI Horaro API Client instance */
-    protected HoraroAPI $horaro;
+    /** @var HoraroClient Horaro API Client instance */
+    protected HoraroClient $horaro;
 
     /** @var string */
     protected string $timeZone = 'Europe/Paris';
@@ -82,7 +83,7 @@ class Site extends SiteModule
         $this->moduleDirectory = MODULES . '/events';
         $this->core->addCSS(url($this->moduleDirectory . '/assets/css/style.css'));
         
-        $this->horaro = new HoraroAPI();
+        $this->horaro = new HoraroClient();
         $this->horaro->setErrorHandler([$this, 'onHoraroError']);
 
         $this->tpl->set('eventsBaseSlug', $this->baseSlug);
