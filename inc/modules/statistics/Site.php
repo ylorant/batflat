@@ -20,6 +20,8 @@ use Inc\Core\Lib\HttpRequest;
 
 class Site extends SiteModule
 {
+    protected const IP_GEOLOC_API_URL = 'https://api.ipgeolocation.io/ipgeo?ip=';
+
     public function init()
     {
         // Browser
@@ -32,9 +34,9 @@ class Site extends SiteModule
         $country = 'Unknown';
         $latest = $this->db('statistics')->where('ip', $ip)->desc('created_at')->limit(1)->oneArray();
         if (!$latest) {
-            $details = json_decode(HttpRequest::get('https://freegeoip.app/json/' . $ip), true);
-            if (!empty($details['country_code'])) {
-                $country = $details['country_code'];
+            $details = json_decode(HttpRequest::get(self::IP_GEOLOC_API_URL . $ip), true);
+            if (!empty($details['country_code2'])) {
+                $country = $details['country_code2'];
             }
         } else {
             $country = $latest['country'];
