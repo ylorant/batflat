@@ -39,7 +39,7 @@ class Image
      * @var integer
      * @access private
      */
-    private int $width;
+    private ?int $width = null;
 
     /**
      * Height of the image in pixel
@@ -47,7 +47,7 @@ class Image
      * @var integer
      * @access private
      */
-    private int $height;
+    private ?int $height = null;
 
     /**
      * Return infos about the image
