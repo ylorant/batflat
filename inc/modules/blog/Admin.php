@@ -14,6 +14,7 @@ namespace Inc\Modules\Blog;
 
 use Exception;
 use Inc\Core\AdminModule;
+use Inc\Core\Lib\Image;
 
 class Admin extends AdminModule
 {
@@ -239,7 +240,7 @@ class Admin extends AdminModule
         }
 
         if (isset($_FILES['cover_photo']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
             if ($img->load($_FILES['cover_photo']['tmp_name'])) {
                 if ($img->getInfos('width') > 1000) {
                     $img->resize(1000);
@@ -395,7 +396,7 @@ class Admin extends AdminModule
     public function postSaveSettings()
     {
         if (isset($_FILES['default_cover']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
             if ($img->load($_FILES['default_cover']['tmp_name'])) {
                 if ($img->getInfos('width') > 1000) {
                     $img->resize(1000);
@@ -437,7 +438,7 @@ class Admin extends AdminModule
         }
 
         if (isset($_FILES['file']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
             if ($img->load($_FILES['file']['tmp_name'])) {
                 $imgPath = $dir . '/' . time() . '.' . $img->getInfos('type');
                 $img->save($imgPath);
