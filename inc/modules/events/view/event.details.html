@@ -21,10 +21,49 @@
         {/if}
 
         {$event.description}
+        {if: isset($event.channel_name) && !empty($event.channel_name)}
+        {$lang.events.see_it_on}
+        <a href="https://www.twitch.tv/{$event.channel_name}">
+            <i class="fab fa-twitch" aria-hidden="true"></i> {$event.channel_name}
+            <div data-twitch-status="{$event.channel_name}"></div>
+        </a><br/>
+        {/if}
         {if: isset($event.ical_url) && !empty($event.ical_url)}
         <a href="{$event.ical_url}">{$lang.events.ical}</a>
         {/if}
     </div>
+    
+    {if: isset($event.items) && !empty($event.items)}
+    <table class="table table-bordered text-small mt-4">
+        <thead>
+        <tr>
+            <th scope="col">{$lang.events.hour}</th>
+            {loop: $event.columns}
+            <th scope="col">{$value}</th>
+            {/loop}
+        </tr>
+        </thead>
+        <tbody>
+        {loop: $event.items}
+        <tr>
+            {if: isset($value.text)}
+            <td colspan="4">
+                <span class="fw-bold">{$value.text}</span>
+            </td>
+            {else}
+            <td>{$value.start}</td>
+            {loop: $value.columns}
+            <td>{$value}</td>
+            {/loop}
+            {/if}
+        </tr>
+        {/loop}
+        </tbody>
+    </table>
+    {elseif: isset($value.horaro_url)}
+    <br/>
+    Planning à venir.
+    {/if}
 </div>
 {if: $hasMap}
 <script>
