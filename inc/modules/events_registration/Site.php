@@ -179,7 +179,7 @@ class Site extends SiteModule
         $events = $this->db('events')
             ->where('lang', $_SESSION['lang'])
             ->where('registration', 1)
-            ->where('end_at', '<=', date())
+            ->where('end_at', '<=', date('now'))
             ->select($fields)
             ->toArray();
 
