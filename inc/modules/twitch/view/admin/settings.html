@@ -1,0 +1,28 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">{$lang.general.settings}</div>
+            <div class="card-body">
+                <form name="user" action="{?=url(ADMIN.'/twitch/save')?}" method="POST">
+                    <div class="form-group">
+                        <label>{$lang.twitch.channel_name}</label>
+                        <input type="text" class="form-control" name="channel_name" value="{$twitch.channel_name}">
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.twitch.client_id}</label>
+                        <input type="text" class="form-control" name="client_id" value="{$twitch.client_id}">
+                    </div>
+                    <div class="form-group">
+                        <label>{$lang.twitch.client_secret}</label>
+                        <input type="text" class="form-control" name="client_secret" value="{$twitch.client_secret}">
+                    </div>
+                    <input type="submit" name="save" class="btn btn-primary" value="{$lang.general.save}">
+                </form>
+                <div class="well well-sm clearfix" style="margin: 15px 0 0 0;">
+                    {$lang.twitch.info} <strong>{noparse}{$twitchEmbed}{/noparse}</strong>.
+                    <span class="label label-default pull-right">info</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>

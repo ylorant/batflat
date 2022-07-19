@@ -1,0 +1,46 @@
+{if: isset($members) && !empty($members)}
+<div class="row">
+    {loop: $members}
+        {? $value = (array) $value ?}
+        {if: $counter != 0 && $counter % 2 == 0}
+        <div class="w-100"></div>
+        {/if}
+    	<div class="col-md-6 col-12 member-block">
+    	    <div class="row">
+    		    <div class="col-4">
+    			     <img src="{$value.picture}" class="member-picture" />
+				</div>
+    			<div class="col-8">
+                    {if: isset($value.twitch_handle) && !empty($value.twitch_handle)}
+    				    <a href="https://www.twitch.tv/{$value.twitch_handle}">
+							{$value.name}<div data-twitch-status="{$value.twitch_handle}"></div>
+							{if: $value.online == 1}
+								<span class="text-success"><i class="fab fa-twitch" aria-hidden="true"></i> EN LIGNE</span>
+							{else}
+								<span class="text-danger"><i class="fab fa-twitch" aria-hidden="true"></i> HORS LIGNE</span>
+							{/if}
+    					</a>
+                    {else}
+                        {$value.name}
+                    {/if}
+    				<hr>
+					{if: isset($value.role) && !empty($value.role)}
+					<div class="sta-role">{$value.role}</div>
+					{else}
+					<div class="sta-role">Membre</div>
+					{/if}
+				</div>
+			</div>
+    	    <div class="row mt-2">
+				<div class="col-md-12">
+					<div class="description text-justify mb-5 mb-md-3">
+						{$value.description}
+					</div>
+				</div>
+			</div>
+    	</div>
+    {/loop}
+</div>
+{else}
+    {$lang.members_sta.no_members_yet}
+{/if}

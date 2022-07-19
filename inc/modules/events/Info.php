@@ -40,9 +40,13 @@ return [
             `building_address` TEXT NULL,
             `latitude` REAL NULL,
             `longitude` REAL NULL,
+            `channel_name` TEXT NULL,
+            `horaro_event_id` TEXT NULL,
+            `horaro_schedule_id` TEXT NULL,
             `lang` TEXT NOT NULL,
             `markdown` INTEGER DEFAULT 0,
             `group_id` INTEGER NULL,
+            `registration` INTEGER DEFAULT 0,
             `updated_at` INTEGER NOT NULL,
             `created_at` INTEGER NOT NULL,
             `published_at`	INTEGER DEFAULT 0

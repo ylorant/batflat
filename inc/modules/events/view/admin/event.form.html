@@ -34,6 +34,10 @@
                         <label>{$lang.events.publish_at}</label>
                         <input type="datetime-local" class="form-control" name="published_at" value="{$event.form.published_at}" />
                     </div>
+                    
+                    <div class="form-group">
+                        <label><input type="checkbox" name="registration" value="1" {if: $event.form.registration== 1}checked{/if} /> {$lang.events.registration}</label>
+                    </div>
 
                     <div class="form-group">
                         <label>{$lang.events.description}*</label>
@@ -70,6 +74,16 @@
                             <input type="text" name="longitude" class="form-control" value="{$event.form.longitude}"/>
                         </div>
                     </fieldset>
+                    
+                    <div class="form-group">
+                        <label>{$lang.events.channel_name}</label>
+                        <input type="text" name="channel_name" class="form-control" value="{$event.form.channel_name}"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{$lang.events.horaro_url}</label>
+                        <input type="text" name="horaro_url" class="form-control" value="{$event.form.horaro_url}"/>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,35 @@
+{template: inc/header.html}
+
+<header class="header-main {?= $twitchOnline ? 'display-embed' : '' ?}" style="background-image: url('{$bat.theme}/img/bg.jpg');">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 logo-container">
+                <img src="{$bat.theme}/img/logo-big.png"/>
+            </div>
+            <div class="col-lg-8">
+                <h1 class="d-none">{$settings.title}</h1>
+                <p class="header-title header-title--main">{$settings.description}</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    {$twitchEmbed}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="section">
+                {if: $bat.notify}
+                <div id="notify" class="alert alert-{$bat.notify.type}">{$bat.notify.text}</div>
+                {/if}
+                {$page.content}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {template: inc/sidebar.html}
+        </div>
+    </div>
+</div>
+
+{template: inc/footer.html}

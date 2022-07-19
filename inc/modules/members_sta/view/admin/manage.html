@@ -1,0 +1,49 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{$lang.general.manage}</h3>
+				<ul class="nav nav-tabs">
+					{loop: $members.langs}
+					<li class="{$value.attr}"><a href="{?=url(ADMIN.'/members_sta/manage?lang='.$value.name)?}">{$value.name}</a></li>
+					{/loop}
+				</ul>
+            </div>
+            <div class="card-body">
+				<h3 style="margin-top:5px;">{$lang.members_sta.members_count} {?=count($members.member)?}</h3>
+                <div class="table-responsive no-margin">
+                    <table class="table table-striped no-margin">
+                        <thead>
+                            <tr>
+                                <th>{$lang.general.name}</th>
+                                <th>{$lang.members_sta.status}</th>
+                                <th class="text-end">{$lang.general.actions}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {if: !empty($members.member)}
+                            {loop: $members.member}
+                            <tr>
+                                <td><a href="{$value.editURL}">{$value.name} <small>{$value.description}</small></a></td>
+                                <td>{$value.status}</td>
+                                <td class="text-end">
+                                    <a href="{$value.editURL}" class="btn btn-success btn-xs">
+                                        <i class="fas fa-pen"></i> <span class="d-none d-sm-block">{$lang.general.edit}</span>
+                                    </a>
+                                    <a href="{$value.delURL}" class="btn btn-danger btn-xs" data-confirm="{$lang.pagelist.delete_confirm}">
+                                        <i class="fas fa-trash-alt"></i> <span class="d-none d-sm-block">{$lang.general.delete}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {/loop}
+                            {else}
+                            <tr><td colspan="4" class="text-center">{$lang.general.empty_array}</td></tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+                {$members.pagination}
+            </div>
+        </div>
+    </div>
+</article>

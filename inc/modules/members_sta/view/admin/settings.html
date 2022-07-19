@@ -1,0 +1,16 @@
+<article class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">{$lang.general.settings}</div>
+            <div class="card-body">
+                <form name="user" action="{?=url(ADMIN.'/members_sta/saveSettings')?}" method="POST">
+                    <div class="form-group">
+                        <label>{$lang.members_sta.slug}</label>
+                        <input type="text" class="form-control" name="slug" value="{$members_sta.slug}">
+                    </div>
+                    <input type="submit" name="save" class="btn btn-primary" value="{$lang.general.save}">
+                </form>
+            </div>
+        </div>
+    </div>
+</article>

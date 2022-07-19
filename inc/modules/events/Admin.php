@@ -10,6 +10,7 @@ namespace Inc\Modules\Events;
 
 use Exception;
 use Inc\Core\AdminModule;
+use Inc\Core\Lib\Image;
 use Inc\Core\Lib\Pagination;
 
 /**
@@ -102,6 +103,8 @@ class Admin extends AdminModule
                 $row['start_at'] = date('d-m-Y H:i', $row['start_at']);
                 $row['end_at'] = date('d-m-Y H:i', $row['end_at']);
                 $row['published_at'] = date("d-m-Y H:i", $row['published_at']);
+                $row['registration'] ?
+                    $row['registration'] = $this->lang('say_yes', 'general') : $row['registration'] = $this->lang('say_no', 'general');
 
                 $row['editURL'] = url([ADMIN, 'events', 'edit', $row['id']]);
                 $row['delURL'] = url([ADMIN, 'events', 'delete', $row['id']]);
@@ -261,12 +264,19 @@ class Admin extends AdminModule
                 'building_address' => null,
                 'latitude' => null,
                 'longitude' => null,
+                'channel_name' => '',
+                'horaro_url' => null,
                 'lang' => $this->settings('settings.lang_site'),
                 'markdown' => 0,
+                'registration' => 0,
                 'published_at' => time(),
             ];
         } else {
             $event = $this->db('events')->where('id', $id)->oneArray();
+            $event['horaro_url'] = null;
+            if (isset($event['horaro_event_id']) && isset($event['horaro_schedule_id'])) {
+                $event['horaro_url'] = $this->getHoraroUrl($event['horaro_event_id'], $event['horaro_schedule_id']);
+            }
         }
 
         $groups = $this->db('events_groups')->asc('name')->toArray();
@@ -344,13 +354,27 @@ class Admin extends AdminModule
         $_POST['start_at'] = strtotime($_POST['start_at']);
         $_POST['end_at'] = strtotime($_POST['end_at']);
         $_POST['published_at'] = strtotime($_POST['published_at']);
+        
+        // Horaro URL deconstruct
+        if (isset($_POST['horaro_url'])) {
+            if (!empty($_POST['horaro_url'])) {
+                $ids = $this->getHoraroIds($_POST['horaro_url']);
+                $_POST['horaro_event_id'] = $ids[0];
+                $_POST['horaro_schedule_id'] = $ids[1];
+            }
+            unset($_POST['horaro_url']);
+        }
 
         if (!isset($_POST['markdown'])) {
             $_POST['markdown'] = 0;
         }
+        
+        if (!isset($_POST['registration'])) {
+            $_POST['registration'] = 0;
+        }
 
         if (isset($_FILES['picture']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
 
             if ($img->load($_FILES['picture']['tmp_name'])) {
                 $_POST['picture'] = $this->getPictureName($_POST['name']) . '-' . mt_rand(1, 999) . "." . $img->getInfos('type');
@@ -465,6 +489,34 @@ class Admin extends AdminModule
 
         redirect(url([ADMIN, 'events', 'settings']));
     }
+    
+    /**
+     * Return Horaro URL with Horaro eventId and scheduleId
+     *
+     * @param string $eventId
+     * @param string $scheduleId
+     * @return string
+     */
+    private function getHoraroUrl(string $eventId, string $scheduleId): ?string
+    {
+        if (!empty($eventId) && !empty($scheduleId)) {
+            return Site::DEFAULT_HORARO_URL . '/' . $eventId . '/' . $scheduleId;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return Horaro eventID and scheduleId from an Horaro URL
+     *
+     * @param $url
+     * @return array
+     */
+    private function getHoraroIds($url): array
+    {
+        $res = explode('/', parse_url($url, PHP_URL_PATH));
+        return [$res[1], $res[2]];
+    }
 
     /**
      * Return a string to rename a picture
@@ -494,7 +546,7 @@ class Admin extends AdminModule
         }
 
         if (isset($_FILES['file']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
 
             if ($img->load($_FILES['file']['tmp_name'])) {
                 $imgPath = $dir . '/' . time() . '.' . $img->getInfos('type');

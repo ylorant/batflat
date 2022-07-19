@@ -1,0 +1,39 @@
+.registration-container {
+    display: flex;
+}
+
+.registration-container .container-one {
+    flex: 0 0 60%;
+}
+.registration-container .container-one.full-width {
+    flex: 0 0 100%;
+}
+
+.registration-container .container-two {
+    flex: 1;
+    margin-left: 25px;
+}
+
+.existing-runs {
+    position: sticky;
+    width: 80%;
+}
+.existing-runs td {
+    vertical-align: middle;
+}
+.existing-runs td.actions {
+    font-size: 1rem;
+    text-align: center;
+}
+
+.checkbox {
+    font-family: "Open Sans", "Arial", sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    margin-top: 25px;
+}
+
+.race-opponents {
+    display: none;
+    margin-top: unset !important;
+}
