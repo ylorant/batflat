@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ec2bb3a2c4d3727ef368a17192155e3",
+    "content-hash": "a289ab65517f392f6bb6ac6b1f164898",
     "packages": [
         {
             "name": "banago/phploy",
@@ -1260,6 +1260,20 @@
             "time": "2021-10-09T06:43:19+00:00"
         },
         {
+            "name": "twbs/bootstrap-icons",
+            "version": "v1.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twbs/icons.git",
+                "reference": "f7f6f61194419dcf4447dbe05b78a72601646490"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twbs/icons/zipball/f7f6f61194419dcf4447dbe05b78a72601646490",
+                "reference": "f7f6f61194419dcf4447dbe05b78a72601646490",
+                "shasum": ""
+            },
+            "type": "library",
             "name": "ylorant/horaro-php-client",
             "version": "1.2",
             "source": {
@@ -1292,6 +1306,23 @@
             ],
             "authors": [
                 {
+                    "name": "Mark Otto",
+                    "email": "markdotto@gmail.com"
+                }
+            ],
+            "description": "Official open source SVG icon library for Bootstrap",
+            "homepage": "https://icons.getbootstrap.com/",
+            "keywords": [
+                "bootstrap",
+                "icon font",
+                "icons",
+                "svg"
+            ],
+            "support": {
+                "issues": "https://github.com/twbs/icons/issues",
+                "source": "https://github.com/twbs/icons/tree/v1.9.1"
+            },
+            "time": "2022-07-16T23:30:40+00:00"
                     "name": "Yohann Lorant",
                     "email": "yohann.lorant@gmail.com"
                 }

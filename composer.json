@@ -27,6 +27,7 @@
         "twbs/bootstrap": "^5.1",
         "makeusabrew/bootbox": "^5.5",
         "fortawesome/font-awesome": "^5.15",
+        "twbs/bootstrap-icons": "^1.9",
         "banago/phploy": "^4.9"
     },
     "require-dev": {
