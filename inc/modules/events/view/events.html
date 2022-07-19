@@ -1,10 +1,6 @@
 <a href="{$ical_all_href}" title="{$lang.events.ical_all}" name="export" class="btn btn-info mb-1"><i class="fas fa-download"></i> {$lang.events.ical_all}</a>
 <div id='calendar'></div>
 <script>
-    // Very stupid fix because FullCalendar are too lazy ...
-    // (https://github.com/fullcalendar/fullcalendar/issues/5544#issuecomment-695187488)
-    window.FontAwesome.config.autoReplaceSvg = 'nest';
-
     let eventsJson = JSON.parse('{$eventSources}');
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -13,7 +9,7 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             timeZone: '{$time_zone}',
             locale: '{$locale}',
-            themeSystem: 'bootstrap',
+            themeSystem: 'bootstrap5',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
