@@ -24,6 +24,6 @@
 }
 
 .event-map {
-    position: sticky;
+    position: sticky!important;
     height: 180px;
 }
