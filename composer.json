@@ -21,12 +21,14 @@
         "ext-simplexml": "*",
         "phpfastcache/phpfastcache": "^7.1",
         "ylorant/twitch-php-client": "^1.2",
-        "ylorant/horaro-php-client": "^1.1",
+        "ylorant/horaro-php-client": "^1.2",
         "eluceo/ical": "^2.5",
         "league/csv": "^9.8",
         "twbs/bootstrap": "^5.1",
         "makeusabrew/bootbox": "^5.5",
-        "fortawesome/font-awesome": "^5.15"
+        "fortawesome/font-awesome": "^5.15",
+        "twbs/bootstrap-icons": "^1.9",
+        "banago/phploy": "^4.9"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "*"

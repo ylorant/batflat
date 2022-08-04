@@ -1,6 +1,7 @@
 .event-picture {
     margin-bottom: 20px;
     width: 100%;
+    text-align: center;
 }
 
 .event-details {
@@ -23,6 +24,6 @@
 }
 
 .event-map {
-    position: sticky;
+    position: sticky!important;
     height: 180px;
 }

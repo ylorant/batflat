@@ -1,5 +1,5 @@
 <article>
-    <form class="row" action="{?=url(ADMIN.'/blog/saveSettings')?}" method="POST">
+    <form class="row" action="{?=url(ADMIN.'/blog/saveSettings')?}" method="POST" enctype="multipart/form-data">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -37,6 +37,18 @@
                     <div class="form-group">
                         <label>{$lang.blog.slug}</label>
                         <input type="text" name="blog[slug]" class="form-control" value="{$settings.slug}" />
+                    </div>
+                    <div class="form-group post-cover">
+                        <label>{$lang.blog.default_cover}</label>
+                        {if: !empty($settings.default_cover)}
+                        <div style="position:relative;">
+                            <img src="{?= url('uploads/blog/'.$settings.default_cover) ?}" class="img-responsive" />
+                            <input type="file" name="default_cover" class="form-control" />
+                            <a href="{$settings.defaultCoverDeleteURL}" class="btn btn-danger" style="position:absolute; right:5px; top:5px;">{$lang.general.delete}</a>
+                        </div>
+                        {else}
+                        <input type="file" name="default_cover" class="form-control"/>
+                        {/if}
                     </div>
                     <input type="submit" name="submit" class="btn btn-primary" value="{$lang.general.save}" />
                 </div>

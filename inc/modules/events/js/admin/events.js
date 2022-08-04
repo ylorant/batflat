@@ -12,7 +12,6 @@ function insertEditor(type)
                 }
             }
 
-
             const sunEditor = SUNEDITOR.create(editor[i], {
                 lang: SUNEDITOR_LANG['en'],
                 minHeight: '300px',

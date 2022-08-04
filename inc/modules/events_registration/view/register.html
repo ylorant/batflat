@@ -10,7 +10,7 @@
                     <select id="event" name="event" class="form-control custom-select">
                         <option value = "-1">Aucun (pas de préférence)</option>
                         {loop: $events}
-                        <option value="{$value.id}">{$value.name}</option>
+                        <option value="{$value.id}">{$value.name} ({$value.start_at})</option>
                         {/loop}
                     </select>
                 </div>

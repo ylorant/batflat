@@ -63,6 +63,8 @@ class Site extends Main
         $assign['theme']    = url(THEMES . '/' . $this->settings->get('settings.theme'));
         $assign['lang']     = $this->lang['name'];
 
+        $favicon = $this->settings->get('settings.favicon');
+        $assign['favicon']  = !empty($favicon) ? url() . '/uploads/settings/' . $favicon : url() . '/favicon.ico';
         $assign['header']   = isset_or($this->appends['header'], ['']);
         $assign['footer']   = isset_or($this->appends['footer'], ['']);
 

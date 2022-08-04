@@ -31,7 +31,7 @@
                 <div class="post-meta">
                     {?= sprintf($lang.blog.posted, $post.author.name, $post.published_at) ?} | {loop: $post.tags}{if: $key != 0}, {/if}<a href="{$value.url}">{$value.name}</a>{/loop}
                 </div>
-                {if: $post.cover_photo}
+                {if: $post.cover_url}
                 <div class="post-image">
                     <a href="{?= url('blog') ?}">
                         <img src="{$post.cover_url}" alt="{$post.title}">

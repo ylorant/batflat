@@ -40,6 +40,7 @@ return [
         $core->db()->pdo()->exec("INSERT INTO `settings` (`module`, `field`, `value`) VALUES ('settings', 'update_changelog', '')");
         $core->db()->pdo()->exec("INSERT INTO `settings` (`module`, `field`, `value`) VALUES ('settings', 'update_version', '0')");
         $core->db()->pdo()->exec("INSERT INTO `settings` (`module`, `field`, `value`) VALUES ('settings', 'license', '')");
+        $core->db()->pdo()->exec("INSERT INTO `settings` (`module`, `field`, `value`) VALUES ('settings', 'favicon', '')");
     },
     'uninstall'     =>  function () use ($core) {
         $core->db()->pdo()->exec("DROP TABLE `settings`");

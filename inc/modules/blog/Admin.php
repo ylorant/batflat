@@ -14,6 +14,7 @@ namespace Inc\Modules\Blog;
 
 use Exception;
 use Inc\Core\AdminModule;
+use Inc\Core\Lib\Image;
 
 class Admin extends AdminModule
 {
@@ -239,7 +240,7 @@ class Admin extends AdminModule
         }
 
         if (isset($_FILES['cover_photo']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
             if ($img->load($_FILES['cover_photo']['tmp_name'])) {
                 if ($img->getInfos('width') > 1000) {
                     $img->resize(1000);
@@ -339,7 +340,21 @@ class Admin extends AdminModule
     }
 
     /**
+     * remove default cover from settings
+     */
+    public function getDeleteDefaultCover()
+    {
+        if ($post = $this->db('settings')->where('module', 'blog')->where('field', 'default_cover')->oneArray()) {
+            unlink(UPLOADS . "/blog/" . $post['value']);
+            $this->db('settings')->where('module', 'blog')->where('field', 'default_cover')->save(['value' => '']);
+            $this->notify('success', $this->lang('cover_deleted'));
+            redirect(url([ADMIN, 'blog', 'settings']));
+        }
+    }
+
+    /**
      * @return string
+     * @throws Exception
      */
     public function getSettings(): string
     {
@@ -374,14 +389,38 @@ class Admin extends AdminModule
                 'name' => '01 ' . $this->lang('janx') . ' 2016, 12:00'
             ],
         ];
+        $assign['defaultCoverDeleteURL'] = url([ADMIN, 'blog', 'deleteDefaultCover']);
         return $this->draw('settings.html', ['settings' => $assign]);
     }
 
     public function postSaveSettings()
     {
+        if (isset($_FILES['default_cover']['tmp_name'])) {
+            $img = new Image();
+            if ($img->load($_FILES['default_cover']['tmp_name'])) {
+                if ($img->getInfos('width') > 1000) {
+                    $img->resize(1000);
+                } else {
+                    if ($img->getInfos('width') < 600) {
+                        $img->resize(600);
+                    }
+                }
+
+                $_POST['blog']['default_cover'] = "default_cover." . $img->getInfos('type');
+            }
+        }
+
         foreach ($_POST['blog'] as $key => $val) {
             $this->settings('blog', $key, $val);
         }
+
+        if (!file_exists(UPLOADS . "/blog")) {
+            mkdir(UPLOADS . "/blog", 0777, true);
+        }
+        if (!empty($img) && $img->getInfos('width')) {
+            $img->save(UPLOADS . "/blog/" . $_POST['blog']['default_cover']);
+        }
+
         $this->notify('success', $this->lang('settings_saved'));
         redirect(url([ADMIN, 'blog', 'settings']));
     }
@@ -399,7 +438,7 @@ class Admin extends AdminModule
         }
 
         if (isset($_FILES['file']['tmp_name'])) {
-            $img = new \Inc\Core\Lib\Image();
+            $img = new Image();
             if ($img->load($_FILES['file']['tmp_name'])) {
                 $imgPath = $dir . '/' . time() . '.' . $img->getInfos('type');
                 $img->save($imgPath);

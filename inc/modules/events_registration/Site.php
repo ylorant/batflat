@@ -176,11 +176,19 @@ class Site extends SiteModule
             'end_at'
         ];
 
-        return $this->db('events')
+        $events = $this->db('events')
             ->where('lang', $_SESSION['lang'])
             ->where('registration', 1)
+            ->where('end_at', '<=', date('now'))
             ->select($fields)
             ->toArray();
+
+        foreach ($events as $key => $event) {
+            $events[$key]['start_at'] = date('d-m-Y', $event['start_at']);
+            $events[$key]['end_at'] = date('d-m-Y', $event['start_at']);
+        }
+
+        return $events;
     }
 
     private function addHeaderFiles()

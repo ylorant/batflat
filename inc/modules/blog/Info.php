@@ -63,7 +63,8 @@
 						('blog', 'title', 'Blog'),
 						('blog', 'desc', '... Why so serious? ...'),
 						('blog', 'slug', 'blog'),
-						('blog', 'latestPostsCount', '5')
+						('blog', 'latestPostsCount', '5'),
+						('blog', 'default_cover', ''),
 			");
 
             if (!is_dir(UPLOADS . "/blog")) {
