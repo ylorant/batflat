@@ -301,7 +301,7 @@ abstract class Main
 
                 if ($row) {
                     if (time() - $row['expiry'] > 0) {
-                        $this->db('remember_me')->delete(['id' => $row['token_id']]);
+                        $this->db('remember_me')->delete('id', $row['token_id']);
                     } else {
                         $_SESSION['bat_user']   = $row['id'];
                         $_SESSION['token']      = bin2hex(openssl_random_pseudo_bytes(6));
