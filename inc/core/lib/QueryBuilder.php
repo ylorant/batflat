@@ -561,7 +561,7 @@ class QueryBuilder
         if ($column) {
             $this->set($column, $value);
         }
-        return $this->build(['only_update' => true]);
+        return $this->build();
     }
 
     /**
@@ -793,7 +793,6 @@ class QueryBuilder
 
             // if there are some conditions then UPDATE
             if (!empty($this->conditions)) {
-                $insert = false;
                 $columns = implode('=?,', array_keys($this->sets)) . '=?';
                 $this->set_binds = array_values($this->sets);
                 $sql = "UPDATE $this->table SET $columns";
