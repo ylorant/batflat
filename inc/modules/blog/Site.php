@@ -124,6 +124,12 @@ class Site extends SiteModule
             if (!empty($row)) {
                 // get dependences
                 $row['author'] = $this->db('users')->where('id', $row['user_id'])->oneArray();
+                
+                // If no user found for given id, then we fetch the first user
+                if (!$row['author']) {
+                    $row['author'] = $this->db('users')->asc('id')->limit(1)->oneArray();
+                }
+                
                 $row['author']['name'] = !empty($row['author']['fullname']) ? $row['author']['fullname'] : $row['author']['username'];
                 $row['author']['avatar'] = url(UPLOADS . '/users/' . $row['author']['avatar']);
 
@@ -220,6 +226,11 @@ class Site extends SiteModule
         foreach ($rows as $row) {
         // get dependences
             $row['author'] = $this->db('users')->where('id', $row['user_id'])->oneArray();
+            // If no user found for given id, then we fetch the first user
+            if (!$row['author']) {
+                $row['author'] = $this->db('users')->asc('id')->limit(1)->oneArray();
+            }
+            
             $row['author']['name'] = !empty($row['author']['fullname']) ? $row['author']['fullname'] : $row['author']['username'];
         // cover
             if (!empty($row['cover_photo'])) {
