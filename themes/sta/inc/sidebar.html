@@ -42,7 +42,11 @@
 			<ul>
 				{if: !empty($upcomingEvents)}
 					{loop: $upcomingEvents}
-						<li class="ellipsis">
+						{if: $value.group_id != 3}
+							<li class="ellipsis focus">
+						{else}
+							<li class="ellipsis">
+						{/if}
 							<a href="{?= url([$eventsBaseSlug, $eventsEventSlug, $value.id]) ?}">
 								<span class="fw-bold">{$value.start_at_short}</span> - {$value.name}
 							</a>

@@ -399,6 +399,10 @@ aside .widget-container .widget-content ul > li > a {
     transition: color 0.4s;
 }
 
+aside .widget-container .widget-content ul > li.focus > a {
+    color: #3e8fe0;
+}
+
 aside .widget-container .widget-content ul > li > a:hover {
     color: #3e8fe0;
 }
